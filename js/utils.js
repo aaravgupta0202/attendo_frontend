@@ -70,7 +70,7 @@ const Utils = {
 
         const toast = document.createElement('div');
         toast.className = `toast ${type}`;
-        
+
         const icons = {
             success: 'fas fa-check-circle',
             error: 'fas fa-exclamation-circle',
@@ -79,11 +79,8 @@ const Utils = {
         };
 
         toast.innerHTML = `
-            <i class="${icons[type] || icons.info}"></i>
-            <div class="toast-content">
-                <h4>${type.charAt(0).toUpperCase() + type.slice(1)}</h4>
-                <p>${message}</p>
-            </div>
+            <div class="toast-icon"><i class="${icons[type] || icons.info}"></i></div>
+            <div class="toast-body"><p>${message}</p></div>
         `;
 
         container.appendChild(toast);

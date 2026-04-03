@@ -1,472 +1,286 @@
-// Setup Logic
+// Setup Logic — Attendo v2
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('Setup page loaded');
-    
-    // DOM Elements
-    const step1 = document.getElementById('step1');
-    const step2 = document.getElementById('step2');
-    const step3 = document.getElementById('step3');
-    const subjectsGrid = document.getElementById('subjectsGrid');
-    const timetableGrid = document.getElementById('timetableGrid');
-    const dragItems = document.getElementById('dragItems');
-    const targetsList = document.getElementById('targetsList');
-    const subjectNameInput = document.getElementById('subjectName');
-    const addSubjectBtn = document.getElementById('addSubjectBtn');
-    const saveSetupBtn = document.getElementById('saveSetupBtn');
-    const setupComplete = document.getElementById('setupComplete');
-    
-    // State
-    let subjects = [];
-    let timetable = {};
-    let currentStep = 1;
 
-    // Initialize
-    init();
+  let currentStep = 1;
+  let selectedPillId = null;
 
-    function init() {
-        loadData();
-        renderSubjects();
-        renderTimetableGrid();
-        renderTargets();
-        setupEventListeners();
-        updateStep(1);
+  const COLORS = [
+    '#4f46e5','#0ea5e9','#10b981','#f59e0b','#f43f5e',
+    '#8b5cf6','#06b6d4','#84cc16','#f97316','#ec4899',
+    '#6366f1','#14b8a6','#a3e635','#fb923c','#e879f9'
+  ];
+
+  const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+  const DAY_SHORT = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+
+  // ── Step navigation ──
+  document.querySelectorAll('[data-next]').forEach(btn => {
+    btn.addEventListener('click', () => goToStep(parseInt(btn.dataset.next)));
+  });
+  document.querySelectorAll('[data-prev]').forEach(btn => {
+    btn.addEventListener('click', () => goToStep(parseInt(btn.dataset.prev)));
+  });
+
+  function goToStep(n) {
+    if (n === 2 && Storage.getSubjects().length === 0) {
+      Utils.showToast('Add at least one subject first!', 'warning');
+      return;
+    }
+    currentStep = n;
+    document.querySelectorAll('.step-block').forEach(el => el.classList.remove('active'));
+    document.getElementById('step' + n).classList.add('active');
+    updateStepper();
+    if (n === 2) renderTimetable();
+    if (n === 3) renderTargets();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function updateStepper() {
+    [1,2,3].forEach(i => {
+      const node = document.getElementById('stepNode' + i);
+      node.classList.remove('active','done');
+      if (i < currentStep) {
+        node.classList.add('done');
+        node.querySelector('.step-circle').innerHTML = '<i class="fas fa-check"></i>';
+      } else if (i === currentStep) {
+        node.classList.add('active');
+        node.querySelector('.step-circle').textContent = i;
+      } else {
+        node.querySelector('.step-circle').textContent = i;
+      }
+    });
+    [1,2].forEach(i => {
+      const line = document.getElementById('stepLine' + i);
+      line.classList.toggle('done', i < currentStep);
+    });
+  }
+
+  // ── Step 1: Subjects ──
+  const subjectInput = document.getElementById('subjectName');
+  const addBtn = document.getElementById('addSubjectBtn');
+  const subjectsGrid = document.getElementById('subjectsGrid');
+
+  renderSubjects();
+
+  addBtn.addEventListener('click', addSubject);
+  subjectInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') addSubject();
+  });
+
+  function addSubject() {
+    const name = subjectInput.value.trim();
+    const error = Utils.validateSubjectName(name);
+    if (error) { Utils.showToast(error, 'warning'); return; }
+
+    const subjects = Storage.getSubjects();
+    if (subjects.some(s => s.name.toLowerCase() === name.toLowerCase())) {
+      Utils.showToast('Subject already exists!', 'warning');
+      return;
     }
 
-    function loadData() {
-        subjects = Storage.getSubjects();
-        timetable = Storage.getTimetable();
-        console.log('Loaded data:', { subjects, timetable });
+    const colorIndex = subjects.length % COLORS.length;
+    Storage.addSubject({ name, target: 75, color: COLORS[colorIndex] });
+    subjectInput.value = '';
+    subjectInput.focus();
+    renderSubjects();
+    Utils.showToast('"' + name + '" added!', 'success');
+  }
+
+  function renderSubjects() {
+    const subjects = Storage.getSubjects();
+    subjectsGrid.innerHTML = '';
+
+    if (!subjects.length) {
+      subjectsGrid.innerHTML = '<div class="empty-subjects"><i class="fas fa-book-open"></i>No subjects yet. Add your first one above!</div>';
+      return;
     }
 
-    function saveData() {
-        Storage.saveSubjects(subjects);
-        Storage.saveTimetable(timetable);
-        console.log('Data saved');
-        return true;
-    }
+    subjects.forEach(s => {
+      const card = document.createElement('div');
+      card.className = 'subj-item';
+      card.innerHTML =
+        '<div class="subj-color" style="background:' + s.color + '"></div>' +
+        '<div class="subj-item-info">' +
+          '<div class="subj-item-name">' + s.name + '</div>' +
+          '<div class="subj-item-meta">Target: ' + s.target + '%</div>' +
+        '</div>' +
+        '<div class="subj-item-actions">' +
+          '<button class="subj-action-btn" data-id="' + s.id + '" title="Delete"><i class="fas fa-trash-alt"></i></button>' +
+        '</div>';
 
-    function updateStep(step) {
-        // Update stepper
-        document.querySelectorAll('.step').forEach(s => {
-            s.classList.remove('active');
-            if (parseInt(s.dataset.step) === step) {
-                s.classList.add('active');
-            }
-        });
-
-        // Update step content
-        [step1, step2, step3].forEach((s, index) => {
-            s.classList.remove('active');
-            if (index + 1 === step) {
-                s.classList.add('active');
-            }
-        });
-
-        currentStep = step;
-        
-        // Scroll to top
-        window.scrollTo(0, 0);
-    }
-
-    // Step 1: Subjects
-    function renderSubjects() {
-        subjectsGrid.innerHTML = '';
-        
-        if (subjects.length === 0) {
-            subjectsGrid.innerHTML = `
-                <div class="empty-subjects">
-                    <div class="empty-icon">
-                        <i class="fas fa-book"></i>
-                    </div>
-                    <h3>No subjects added yet</h3>
-                    <p>Add your first subject using the form above</p>
-                </div>
-            `;
-            return;
+      card.querySelector('.subj-action-btn').addEventListener('click', () => {
+        if (confirm('Delete "' + s.name + '"?')) {
+          Storage.deleteSubject(s.id);
+          const tt = Storage.getTimetable();
+          Object.keys(tt).forEach(day => { tt[day] = tt[day].filter(id => id !== s.id); });
+          Storage.saveTimetable(tt);
+          renderSubjects();
+          Utils.showToast('"' + s.name + '" deleted', 'info');
         }
+      });
+      subjectsGrid.appendChild(card);
+    });
+  }
 
-        subjects.forEach(subject => {
-            const card = document.createElement('div');
-            card.className = 'subject-card';
-            card.dataset.id = subject.id;
-            
-            card.innerHTML = `
-                <div class="subject-color" style="background: ${subject.color}"></div>
-                <div class="subject-info">
-                    <div class="subject-name">${subject.name}</div>
-                    <div class="subject-meta">Target: ${subject.target}%</div>
-                </div>
-                <div class="subject-actions">
-                    <button class="action-btn edit-btn" title="Edit">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="action-btn delete-btn" title="Delete">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </div>
-            `;
-            
-            subjectsGrid.appendChild(card);
-        });
+  // ── Step 2: Timetable ──
+  function renderTimetable() {
+    const grid = document.getElementById('timetableGrid');
+    const pool = document.getElementById('dragPool');
+    const subjects = Storage.getSubjects();
+    const timetable = Storage.getTimetable();
 
-        // Add event listeners for edit/delete
-        setupSubjectEventListeners();
-        renderDragItems();
-    }
+    grid.innerHTML = '';
+    DAYS.forEach((day, di) => {
+      const dayKey = day.toLowerCase();
+      const col = document.createElement('div');
+      col.className = 'day-col';
+      col.dataset.day = dayKey;
 
-    function addSubject() {
-        const name = subjectNameInput.value.trim();
-        if (!name) {
-            Utils.showToast('Please enter a subject name', 'error');
-            return;
+      const assigned = (timetable[dayKey] || [])
+        .map(id => subjects.find(s => s.id === id))
+        .filter(Boolean);
+
+      const subjectsHtml = assigned.map(s =>
+        '<div class="day-subject-chip" style="background:' + s.color + '">' +
+          s.name +
+          '<button class="chip-remove" data-id="' + s.id + '" data-day="' + dayKey + '"><i class="fas fa-times"></i></button>' +
+        '</div>'
+      ).join('');
+
+      col.innerHTML =
+        '<div class="day-col-head">' + DAY_SHORT[di] + '</div>' +
+        '<div class="day-col-subjects" id="daySubjects_' + dayKey + '">' +
+          subjectsHtml +
+          (assigned.length === 0 ? '<div class="empty-col-hint">Drop here</div>' : '') +
+        '</div>';
+
+      col.addEventListener('dragover', e => { e.preventDefault(); col.classList.add('drag-over'); });
+      col.addEventListener('dragleave', () => col.classList.remove('drag-over'));
+      col.addEventListener('drop', e => {
+        e.preventDefault();
+        col.classList.remove('drag-over');
+        const subjectId = e.dataTransfer.getData('subjectId');
+        if (subjectId) assignSubjectToDay(subjectId, dayKey);
+      });
+
+      col.addEventListener('click', () => {
+        if (selectedPillId) {
+          assignSubjectToDay(selectedPillId, dayKey);
+          clearPillSelection();
         }
+      });
 
-        // Check for duplicates
-        if (subjects.some(s => s.name.toLowerCase() === name.toLowerCase())) {
-            Utils.showToast('Subject already exists', 'warning');
-            return;
-        }
+      grid.appendChild(col);
+    });
 
-        const newSubject = {
-            id: Utils.generateId(),
-            name: name,
-            attended: 0,
-            total: 0,
-            target: 75,
-            color: Utils.getRandomColor(),
-            createdAt: new Date().toISOString()
-        };
+    // Remove buttons
+    grid.querySelectorAll('.chip-remove').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        removeFromDay(btn.dataset.id, btn.dataset.day);
+      });
+    });
 
-        subjects.push(newSubject);
-        subjectNameInput.value = '';
-        renderSubjects();
-        renderTargets();
-        Utils.showToast('Subject added successfully', 'success');
-    }
+    // Drag pool
+    pool.innerHTML = '';
+    subjects.forEach(s => {
+      const pill = document.createElement('div');
+      pill.className = 'drag-pill';
+      pill.dataset.id = s.id;
+      pill.draggable = true;
+      pill.innerHTML = '<div class="drag-pill-dot" style="background:' + s.color + '"></div>' + s.name;
 
-    function editSubject(subjectId) {
-        const subject = subjects.find(s => s.id === subjectId);
-        if (!subject) return;
+      pill.addEventListener('dragstart', e => {
+        e.dataTransfer.setData('subjectId', s.id);
+        pill.classList.add('dragging');
+      });
+      pill.addEventListener('dragend', () => pill.classList.remove('dragging'));
 
-        const newName = prompt('Edit subject name:', subject.name);
-        if (newName && newName.trim() && newName !== subject.name) {
-            subject.name = newName.trim();
-            renderSubjects();
-            renderDragItems();
-            renderTargets();
-            Utils.showToast('Subject updated', 'success');
-        }
-    }
-
-    function deleteSubject(subjectId) {
-        if (!confirm('Delete this subject? It will also be removed from your timetable.')) {
-            return;
-        }
-
-        // Remove from subjects
-        subjects = subjects.filter(s => s.id !== subjectId);
-        
-        // Remove from timetable
-        Object.keys(timetable).forEach(day => {
-            timetable[day] = timetable[day].filter(id => id !== subjectId);
-        });
-
-        renderSubjects();
-        renderTimetableGrid();
-        renderTargets();
-        Utils.showToast('Subject deleted', 'success');
-    }
-
-    function setupSubjectEventListeners() {
-        // Use event delegation for edit/delete buttons
-        subjectsGrid.addEventListener('click', (e) => {
-            const card = e.target.closest('.subject-card');
-            if (!card) return;
-            
-            const subjectId = card.dataset.id;
-            
-            if (e.target.closest('.edit-btn')) {
-                editSubject(subjectId);
-            } else if (e.target.closest('.delete-btn')) {
-                deleteSubject(subjectId);
-            }
-        });
-    }
-
-    // Step 2: Timetable
-    function renderTimetableGrid() {
-        timetableGrid.innerHTML = '';
-        const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-
-        days.forEach(day => {
-            const dayKey = day.toLowerCase();
-            if (!timetable[dayKey]) {
-                timetable[dayKey] = [];
-            }
-            
-            const dayColumn = document.createElement('div');
-            dayColumn.className = 'day-column';
-            dayColumn.dataset.day = dayKey;
-            
-            const subjectsInDay = timetable[dayKey]
-                .map(id => subjects.find(s => s.id === id))
-                .filter(Boolean);
-
-            dayColumn.innerHTML = `
-                <div class="day-header">${day}</div>
-                <div class="day-subjects">
-                    ${subjectsInDay.map(subject => `
-                        <div class="day-subject" draggable="true" data-id="${subject.id}" style="background: ${subject.color}">
-                            ${subject.name}
-                            <button class="remove-subject" data-id="${subject.id}">&times;</button>
-                        </div>
-                    `).join('')}
-                    ${subjectsInDay.length === 0 ? '<div class="empty-day">Drag subjects here</div>' : ''}
-                </div>
-            `;
-            
-            timetableGrid.appendChild(dayColumn);
-        });
-
-        setupDragAndDrop();
-    }
-
-    function renderDragItems() {
-        dragItems.innerHTML = '';
-        
-        subjects.forEach(subject => {
-            const dragItem = document.createElement('div');
-            dragItem.className = 'drag-item';
-            dragItem.draggable = true;
-            dragItem.dataset.id = subject.id;
-            dragItem.innerHTML = `
-                <i class="fas fa-grip-vertical"></i>
-                <span>${subject.name}</span>
-            `;
-            dragItems.appendChild(dragItem);
-        });
-
-        setupDragAndDrop();
-    }
-
-    function setupDragAndDrop() {
-        // Setup draggable items
-        document.querySelectorAll('.drag-item').forEach(item => {
-            item.addEventListener('dragstart', (e) => {
-                e.dataTransfer.setData('text/plain', item.dataset.id);
-                item.classList.add('dragging');
-                e.dataTransfer.effectAllowed = 'move';
-            });
-
-            item.addEventListener('dragend', () => {
-                item.classList.remove('dragging');
-            });
-        });
-
-        // Setup day columns as drop zones
-        document.querySelectorAll('.day-column').forEach(column => {
-            column.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                column.classList.add('drag-over');
-                e.dataTransfer.dropEffect = 'move';
-            });
-
-            column.addEventListener('dragleave', () => {
-                column.classList.remove('drag-over');
-            });
-
-            column.addEventListener('drop', (e) => {
-                e.preventDefault();
-                column.classList.remove('drag-over');
-                
-                const subjectId = e.dataTransfer.getData('text/plain');
-                const day = column.dataset.day;
-                
-                if (subjectId) {
-                    addSubjectToDay(day, subjectId);
-                }
-            });
-            
-            // Remove subject from day
-            column.addEventListener('click', (e) => {
-                if (e.target.classList.contains('remove-subject')) {
-                    const subjectId = e.target.dataset.id;
-                    const day = column.dataset.day;
-                    removeSubjectFromDay(day, subjectId);
-                }
-            });
-        });
-    }
-
-    function addSubjectToDay(day, subjectId) {
-        const subject = subjects.find(s => s.id === subjectId);
-        if (!subject) {
-            Utils.showToast('Subject not found', 'error');
-            return;
-        }
-        
-        if (!timetable[day]) {
-            timetable[day] = [];
-        }
-        
-        // Check if subject already in this day
-        const alreadyExists = timetable[day].includes(subjectId);
-        
-        if (!alreadyExists) {
-            timetable[day].push(subjectId);
-            renderTimetableGrid();
-            saveData();
-            Utils.showToast(`✓ ${subject.name} added to ${day.charAt(0).toUpperCase() + day.slice(1)}`, 'success');
+      pill.addEventListener('click', () => {
+        if (selectedPillId === s.id) {
+          clearPillSelection();
         } else {
-            Utils.showToast(`${subject.name} is already scheduled for ${day.charAt(0).toUpperCase() + day.slice(1)}`, 'info');
+          clearPillSelection();
+          selectedPillId = s.id;
+          pill.style.borderColor = 'var(--brand)';
+          pill.style.color = 'var(--brand)';
+          pill.style.background = 'rgba(79,70,229,0.06)';
+          Utils.showToast('Now tap a day column to assign', 'info', 2000);
         }
+      });
+
+      pool.appendChild(pill);
+    });
+  }
+
+  function assignSubjectToDay(subjectId, dayKey) {
+    const timetable = Storage.getTimetable();
+    if (!timetable[dayKey]) timetable[dayKey] = [];
+    if (!timetable[dayKey].includes(subjectId)) {
+      timetable[dayKey].push(subjectId);
+      Storage.saveTimetable(timetable);
     }
+    renderTimetable();
+  }
 
-    function removeSubjectFromDay(day, subjectId) {
-        if (timetable[day]) {
-            const subject = subjects.find(s => s.id === subjectId);
-            timetable[day] = timetable[day].filter(id => id !== subjectId);
-            renderTimetableGrid();
-            saveData();
-            
-            if (subject) {
-                Utils.showToast(`✓ ${subject.name} removed from ${day.charAt(0).toUpperCase() + day.slice(1)}`, 'success');
-            }
-        }
+  function removeFromDay(subjectId, dayKey) {
+    const timetable = Storage.getTimetable();
+    if (timetable[dayKey]) {
+      timetable[dayKey] = timetable[dayKey].filter(id => id !== subjectId);
+      Storage.saveTimetable(timetable);
+      renderTimetable();
     }
+  }
 
-    // Step 3: Targets
-    function renderTargets() {
-        targetsList.innerHTML = '';
-        
-        if (subjects.length === 0) {
-            targetsList.innerHTML = `
-                <div class="empty-subjects">
-                    <div class="empty-icon">
-                        <i class="fas fa-bullseye"></i>
-                    </div>
-                    <h3>No subjects to configure</h3>
-                    <p>Add subjects in step 1 first</p>
-                </div>
-            `;
-            return;
-        }
+  function clearPillSelection() {
+    selectedPillId = null;
+    document.querySelectorAll('.drag-pill').forEach(p => {
+      p.style.borderColor = '';
+      p.style.color = '';
+      p.style.background = '';
+    });
+  }
 
-        subjects.forEach(subject => {
-            const targetItem = document.createElement('div');
-            targetItem.className = 'subject-card';
-            targetItem.innerHTML = `
-                <div class="subject-color" style="background: ${subject.color}"></div>
-                <div class="subject-info">
-                    <div class="subject-name">${subject.name}</div>
-                    <div class="subject-meta">
-                        <span class="target-value">${subject.target}%</span>
-                    </div>
-                </div>
-                <div class="subject-actions">
-                    <input type="range" 
-                           class="target-slider" 
-                           min="0" 
-                           max="100" 
-                           value="${subject.target}"
-                           step="5"
-                           data-id="${subject.id}">
-                </div>
-            `;
-            
-            targetsList.appendChild(targetItem);
-        });
+  // ── Step 3: Targets ──
+  function renderTargets() {
+    const subjects = Storage.getSubjects();
+    const list = document.getElementById('targetsList');
+    list.innerHTML = '';
 
-        // Add slider event listeners
-        targetsList.addEventListener('input', (e) => {
-            if (e.target.classList.contains('target-slider')) {
-                const value = e.target.value;
-                const targetValue = e.target.closest('.subject-card').querySelector('.target-value');
-                targetValue.textContent = `${value}%`;
-            }
-        });
+    subjects.forEach(s => {
+      const row = document.createElement('div');
+      row.className = 'target-row';
+      row.innerHTML =
+        '<div class="target-row-head">' +
+          '<span class="target-subj-name">' + s.name + '</span>' +
+          '<span class="target-val-display" id="tVal_' + s.id + '">' + s.target + '%</span>' +
+        '</div>' +
+        '<input type="range" class="target-slider" min="50" max="100" step="5" value="' + s.target + '" data-id="' + s.id + '" id="tSlider_' + s.id + '">' +
+        '<div class="target-hint" id="tHint_' + s.id + '">' + getHint(s.target) + '</div>';
 
-        targetsList.addEventListener('change', (e) => {
-            if (e.target.classList.contains('target-slider')) {
-                const subjectId = e.target.dataset.id;
-                const value = parseInt(e.target.value);
-                
-                const subject = subjects.find(s => s.id === subjectId);
-                if (subject) {
-                    subject.target = value;
-                    Utils.showToast('Target updated', 'success');
-                }
-            }
-        });
-    }
+      row.querySelector('.target-slider').addEventListener('input', e => {
+        const val = parseInt(e.target.value);
+        document.getElementById('tVal_' + s.id).textContent = val + '%';
+        document.getElementById('tHint_' + s.id).textContent = getHint(val);
+      });
+      list.appendChild(row);
+    });
+  }
 
-    function saveSetup() {
-        if (saveData()) {
-            setupComplete.classList.remove('hidden');
-            targetsList.classList.add('hidden');
-            saveSetupBtn.classList.add('hidden');
-            
-            Utils.showToast('Setup completed successfully!', 'success');
-            
-            // Update first run setting
-            const settings = JSON.parse(localStorage.getItem('attendo_settings') || '{}');
-            settings.firstRun = false;
-            localStorage.setItem('attendo_settings', JSON.stringify(settings));
-        }
-    }
+  function getHint(val) {
+    if (val >= 85) return '🎯 High commitment';
+    if (val >= 75) return '📚 Standard requirement';
+    return '⚠️ Below average — be careful';
+  }
 
-    function setupEventListeners() {
-        // Add subject
-        addSubjectBtn.addEventListener('click', addSubject);
-        subjectNameInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') addSubject();
-        });
-
-        // Step navigation
-        document.addEventListener('click', (e) => {
-            if (e.target.classList.contains('btn-next') || e.target.closest('.btn-next')) {
-                const btn = e.target.classList.contains('btn-next') ? e.target : e.target.closest('.btn-next');
-                const nextStep = parseInt(btn.dataset.next);
-                
-                if (validateStep(currentStep)) {
-                    updateStep(nextStep);
-                }
-            }
-            
-            if (e.target.classList.contains('btn-back') || e.target.closest('.btn-back')) {
-                const btn = e.target.classList.contains('btn-back') ? e.target : e.target.closest('.btn-back');
-                const prevStep = parseInt(btn.dataset.prev);
-                updateStep(prevStep);
-            }
-        });
-
-        // Save setup
-        saveSetupBtn.addEventListener('click', saveSetup);
-    }
-
-    function validateStep(step) {
-        switch(step) {
-            case 1:
-                if (subjects.length === 0) {
-                    Utils.showToast('Please add at least one subject', 'error');
-                    return false;
-                }
-                return true;
-                
-            case 2:
-                // Check if timetable has at least one class
-                const hasClasses = Object.values(timetable).some(day => day.length > 0);
-                if (!hasClasses) {
-                    Utils.showToast('Please add at least one class to your timetable', 'error');
-                    return false;
-                }
-                return true;
-                
-            case 3:
-                return true;
-                
-            default:
-                return true;
-        }
-    }
+  // ── Save ──
+  document.getElementById('saveSetupBtn').addEventListener('click', () => {
+    document.querySelectorAll('.target-slider').forEach(slider => {
+      Storage.updateSubject(slider.dataset.id, { target: parseInt(slider.value) });
+    });
+    Utils.showToast('Setup saved!', 'success');
+    document.getElementById('targetsList').style.display = 'none';
+    document.getElementById('step3Footer').style.display = 'none';
+    document.getElementById('completionCard').classList.remove('hidden');
+  });
 });

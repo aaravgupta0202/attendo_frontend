@@ -1,735 +1,595 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Attendo • Statistics</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/glass.css">
-    <link rel="stylesheet" href="css/style.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        /* Statistics Specific Styles */
-        .stats-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: var(--spacing-md) 0;
-        }
-
-        .stats-header {
-            text-align: center;
-            margin-bottom: var(--spacing-xl);
-        }
-
-        .stats-title {
-            font-family: var(--font-accent);
-            font-size: 2.5rem;
-            margin-bottom: var(--spacing-sm);
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .stats-subtitle {
-            color: var(--primary-light);
-            font-size: 1.1rem;
-        }
-
-        /* Overview Cards */
-        .overview-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: var(--spacing-md);
-            margin-bottom: var(--spacing-xl);
-        }
-
-        .overview-card {
-            background: var(--glass-bg);
-            backdrop-filter: var(--glass-blur);
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--glass-border);
-            padding: var(--spacing-lg);
-            text-align: center;
-            transition: all var(--transition);
-        }
-
-        .overview-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--glass-shadow);
-        }
-
-        .overview-icon {
-            width: 60px;
-            height: 60px;
-            margin: 0 auto var(--spacing-md);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-        }
-
-        .overview-card:nth-child(1) .overview-icon {
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
-            color: white;
-        }
-
-        .overview-card:nth-child(2) .overview-icon {
-            background: linear-gradient(135deg, var(--accent), #34d399);
-            color: white;
-        }
-
-        .overview-card:nth-child(3) .overview-icon {
-            background: linear-gradient(135deg, var(--secondary), var(--secondary-dark));
-            color: var(--primary-dark);
-        }
-
-        .overview-value {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            color: var(--primary);
-        }
-
-        .overview-label {
-            color: var(--primary-light);
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        /* Charts Section */
-        .charts-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: var(--spacing-md);
-            margin-bottom: var(--spacing-xl);
-        }
-
-        .chart-card {
-            background: var(--glass-bg);
-            backdrop-filter: var(--glass-blur);
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--glass-border);
-            padding: var(--spacing-lg);
-        }
-
-        .chart-header {
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-sm);
-            margin-bottom: var(--spacing-lg);
-        }
-
-        .chart-header i {
-            color: var(--primary);
-            font-size: 1.2rem;
-        }
-
-        .chart-header h3 {
-            margin: 0;
-            color: var(--primary);
-            font-size: 1.2rem;
-        }
-
-        .chart-container {
-            position: relative;
-            height: 300px;
-        }
-
-        /* Subject Performance */
-        .performance-list {
-            margin-bottom: var(--spacing-xl);
-        }
-
-        .subject-perf-card {
-            background: var(--glass-bg);
-            backdrop-filter: var(--glass-blur);
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--glass-border);
-            padding: var(--spacing-lg);
-            margin-bottom: var(--spacing-md);
-            transition: all var(--transition);
-        }
-
-        .subject-perf-card:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--glass-shadow);
-        }
-
-        .perf-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: var(--spacing-md);
-        }
-
-        .subject-name {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: var(--primary);
-        }
-
-        .risk-badge {
-            padding: 0.25rem 0.75rem;
-            border-radius: var(--radius-sm);
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        .risk-high {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--danger);
-        }
-
-        .risk-medium {
-            background: rgba(245, 158, 11, 0.1);
-            color: var(--warning);
-        }
-
-        .risk-low {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--accent);
-        }
-
-        .perf-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: var(--spacing-md);
-            margin-bottom: var(--spacing-md);
-        }
-
-        .stat-box {
-            text-align: center;
-            padding: var(--spacing-sm);
-        }
-
-        .stat-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 0.25rem;
-        }
-
-        .stat-label {
-            font-size: 0.8rem;
-            color: var(--primary-light);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .perf-progress {
-            margin-top: var(--spacing-md);
-        }
-
-        .progress-info {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-        }
-
-        /* Calendar */
-        .calendar-card {
-            background: var(--glass-bg);
-            backdrop-filter: var(--glass-blur);
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--glass-border);
-            padding: var(--spacing-lg);
-            margin-bottom: var(--spacing-xl);
-        }
-
-        .calendar-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: var(--spacing-lg);
-        }
-
-        .calendar-nav {
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-sm);
-        }
-
-        .nav-btn {
-            width: 36px;
-            height: 36px;
-            border-radius: var(--radius-md);
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all var(--transition);
-        }
-
-        .nav-btn:hover {
-            background: var(--primary);
-            color: white;
-        }
-
-        .calendar-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: var(--primary);
-        }
-
-        .calendar-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 2px;
-        }
-
-        .calendar-day {
-            text-align: center;
-            padding: var(--spacing-sm);
-            font-weight: 500;
-            color: var(--primary-light);
-            font-size: 0.9rem;
-        }
-
-        .calendar-date {
-            aspect-ratio: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: var(--radius-md);
-            cursor: pointer;
-            transition: all var(--transition);
-            font-weight: 500;
-            position: relative;
-        }
-
-        .calendar-date:hover {
-            background: rgba(26, 35, 126, 0.05);
-        }
-
-        .calendar-date.today {
-            background: var(--primary);
-            color: white;
-        }
-
-        .calendar-date.has-attendance {
-            background: var(--accent);
-            color: white;
-        }
-
-        .calendar-date.partial {
-            background: linear-gradient(135deg, var(--accent) 50%, var(--glass-border) 50%);
-            color: white;
-        }
-
-        .date-tooltip {
-            position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--primary);
-            color: white;
-            padding: 0.5rem;
-            border-radius: var(--radius-sm);
-            font-size: 0.8rem;
-            white-space: nowrap;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity var(--transition);
-            z-index: 10;
-        }
-
-        .calendar-date:hover .date-tooltip {
-            opacity: 1;
-        }
-
-        /* Insights */
-        .insights-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: var(--spacing-md);
-            margin-bottom: var(--spacing-xl);
-        }
-
-        .insight-card {
-            background: var(--glass-bg);
-            backdrop-filter: var(--glass-blur);
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--glass-border);
-            padding: var(--spacing-lg);
-        }
-
-        .insight-header {
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-sm);
-            margin-bottom: var(--spacing-md);
-        }
-
-        .insight-header i {
-            font-size: 1.5rem;
-        }
-
-        .insight-card.warning .insight-header i {
-            color: var(--warning);
-        }
-
-        .insight-card.success .insight-header i {
-            color: var(--accent);
-        }
-
-        .insight-header h3 {
-            margin: 0;
-            font-size: 1.1rem;
-            color: var(--primary);
-        }
-
-        .insight-list {
-            display: flex;
-            flex-direction: column;
-            gap: var(--spacing-sm);
-        }
-
-        .insight-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: var(--spacing-sm);
-            background: rgba(26, 35, 126, 0.03);
-            border-radius: var(--radius-sm);
-            font-size: 0.9rem;
-        }
-
-        .insight-subject {
-            font-weight: 500;
-            color: var(--primary);
-        }
-
-        .insight-value {
-            font-weight: 600;
-        }
-
-        /* Actions */
-        .actions-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: var(--spacing-md);
-            margin-bottom: var(--spacing-xl);
-        }
-
-        .action-card {
-            background: var(--glass-bg);
-            backdrop-filter: var(--glass-blur);
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--glass-border);
-            padding: var(--spacing-lg);
-            text-align: center;
-            cursor: pointer;
-            transition: all var(--transition);
-        }
-
-        .action-card:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--glass-shadow);
-        }
-
-        .action-icon {
-            width: 60px;
-            height: 60px;
-            margin: 0 auto var(--spacing-md);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            color: white;
-        }
-
-        .action-card:nth-child(1) .action-icon {
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
-        }
-
-        .action-card:nth-child(2) .action-icon {
-            background: linear-gradient(135deg, var(--accent), #34d399);
-        }
-
-        .action-card:nth-child(3) .action-icon {
-            background: linear-gradient(135deg, var(--danger), #f87171);
-        }
-
-        .action-title {
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: var(--primary);
-        }
-
-        .action-desc {
-            font-size: 0.9rem;
-            color: var(--primary-light);
-        }
-
-        /* Empty State */
-        .empty-stats {
-            text-align: center;
-            padding: var(--spacing-xl);
-            grid-column: 1 / -1;
-        }
-
-        .empty-icon {
-            width: 100px;
-            height: 100px;
-            margin: 0 auto var(--spacing-md);
-            background: linear-gradient(135deg, var(--primary-light), var(--accent));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.5rem;
-            color: white;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .charts-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .insights-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .actions-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .perf-stats {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .calendar-grid {
-                gap: 1px;
-            }
-            
-            .calendar-date {
-                font-size: 0.8rem;
-                padding: 0.25rem;
-            }
-            
-            .stats-title {
-                font-size: 2rem;
-            }
-            
-            .overview-grid {
-                grid-template-columns: repeat(3, 1fr);
-                gap: 10px;
-            }
-            
-            .overview-card {
-                padding: 12px;
-            }
-            
-            .overview-value {
-                font-size: 1.8rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .overview-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .perf-stats {
-                grid-template-columns: 1fr;
-            }
-            
-            .calendar-grid {
-                grid-template-columns: repeat(7, 1fr);
-            }
-            
-            .stats-title {
-                font-size: 1.8rem;
-            }
-            
-            .overview-value {
-                font-size: 1.6rem;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Attendo • Statistics</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/theme.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    /* ─── STATS SPECIFIC ─── */
+
+    /* Overview grid */
+    .overview-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-3);
+      margin-bottom: var(--space-6);
+    }
+
+    .ov-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-xl);
+      padding: var(--space-5) var(--space-4);
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+      transition: transform var(--t-base) var(--ease);
+    }
+    .ov-card:hover { transform: translateY(-2px); }
+
+    .ov-icon {
+      width: 44px; height: 44px;
+      border-radius: var(--r-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto var(--space-3);
+      font-size: 1.1rem;
+    }
+    .ov-icon-brand   { background: rgba(79,70,229,0.1);  color: var(--brand); }
+    .ov-icon-emerald { background: rgba(16,185,129,0.1);  color: var(--emerald-d); }
+    .ov-icon-amber   { background: rgba(245,158,11,0.1);  color: var(--amber-d); }
+
+    .ov-value {
+      font-family: var(--font-display);
+      font-size: 1.9rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      color: var(--ink);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .ov-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--slate);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+    }
+
+    /* Charts */
+    .charts-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-4);
+      margin-bottom: var(--space-6);
+    }
+
+    .chart-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-xl);
+      padding: var(--space-5);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .chart-card-title {
+      font-family: var(--font-display);
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--ink-light);
+      letter-spacing: -0.01em;
+      margin-bottom: var(--space-4);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+    .chart-card-title i { color: var(--brand); font-size: 0.85rem; }
+
+    .chart-wrap {
+      position: relative;
+      height: 220px;
+    }
+
+    /* Subject Performance */
+    .subject-list { margin-bottom: var(--space-6); }
+
+    .subject-list h2 {
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: var(--space-4);
+    }
+
+    .subj-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-xl);
+      padding: var(--space-5);
+      margin-bottom: var(--space-3);
+      box-shadow: var(--shadow-xs);
+      transition: all var(--t-base) var(--ease);
+      position: relative;
+      overflow: hidden;
+    }
+    .subj-card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 4px;
+      border-radius: 4px 0 0 4px;
+    }
+    .subj-card.risk-low::before    { background: var(--emerald); }
+    .subj-card.risk-medium::before { background: var(--amber); }
+    .subj-card.risk-high::before   { background: var(--rose); }
+
+    .subj-card:hover { transform: translateX(2px); box-shadow: var(--shadow-sm); }
+
+    .subj-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-4);
+    }
+    .subj-name {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .subj-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-2);
+      margin-bottom: var(--space-4);
+    }
+    .subj-stat-box {
+      background: var(--surface-2);
+      border-radius: var(--r-md);
+      padding: var(--space-3) var(--space-2);
+      text-align: center;
+    }
+    .subj-stat-val {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--ink);
+      letter-spacing: -0.02em;
+    }
+    .subj-stat-lbl {
+      font-size: 0.65rem;
+      color: var(--slate);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    .subj-progress-wrap {
+      border-top: 1px solid var(--border);
+      padding-top: var(--space-3);
+    }
+    .subj-progress-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      color: var(--slate);
+      margin-bottom: var(--space-2);
+      font-weight: 500;
+    }
+
+    /* Calendar */
+    .calendar-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-xl);
+      padding: var(--space-5);
+      margin-bottom: var(--space-6);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .cal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-5);
+    }
+    .cal-month {
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--ink);
+      letter-spacing: -0.02em;
+    }
+    .cal-nav { display: flex; align-items: center; gap: var(--space-2); }
+    .cal-nav-btn {
+      width: 34px; height: 34px;
+      border-radius: var(--r-md);
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      color: var(--ink-light);
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all var(--t-fast);
+    }
+    .cal-nav-btn:hover { background: var(--brand); color: white; border-color: var(--brand); }
+    .cal-today-btn {
+      padding: var(--space-1) var(--space-3);
+      font-size: 0.78rem;
+      font-weight: 600;
+      border-radius: var(--r-full);
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      color: var(--ink-light);
+      cursor: pointer;
+      transition: all var(--t-fast);
+    }
+    .cal-today-btn:hover { background: var(--brand); color: white; border-color: var(--brand); }
+
+    .cal-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 2px;
+    }
+    .cal-dow {
+      text-align: center;
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--mist);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: var(--space-1) 0;
+      margin-bottom: var(--space-1);
+    }
+    .cal-cell {
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--r-md);
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--ink-light);
+      cursor: pointer;
+      transition: all var(--t-fast);
+      position: relative;
+    }
+    .cal-cell:hover { background: var(--surface-2); }
+    .cal-cell.empty { cursor: default; }
+    .cal-cell.today {
+      background: var(--brand);
+      color: white;
+      font-weight: 700;
+    }
+    .cal-cell.full    { background: rgba(16,185,129,0.15); color: var(--emerald-d); font-weight: 600; }
+    .cal-cell.partial { background: rgba(245,158,11,0.15); color: var(--amber-d); font-weight: 600; }
+    .cal-cell.missed  { background: rgba(244,63,94,0.10); color: var(--rose); font-weight: 600; }
+
+    /* Legend */
+    .cal-legend {
+      display: flex;
+      gap: var(--space-4);
+      margin-top: var(--space-4);
+      flex-wrap: wrap;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: 0.75rem;
+      color: var(--slate);
+      font-weight: 500;
+    }
+    .legend-dot {
+      width: 10px; height: 10px;
+      border-radius: 3px;
+    }
+
+    /* Insights */
+    .insights-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-4);
+      margin-bottom: var(--space-6);
+    }
+
+    .insight-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-xl);
+      padding: var(--space-5);
+      box-shadow: var(--shadow-sm);
+    }
+    .insight-head {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      margin-bottom: var(--space-4);
+    }
+    .insight-head h3 {
+      font-family: var(--font-display);
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--ink);
+    }
+    .insight-head i { font-size: 1rem; }
+    .insight-card.warn .insight-head i { color: var(--amber-d); }
+    .insight-card.safe .insight-head i { color: var(--emerald-d); }
+
+    .insight-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--space-3);
+      border-radius: var(--r-md);
+      font-size: 0.84rem;
+      margin-bottom: var(--space-2);
+      transition: background var(--t-fast);
+    }
+    .insight-row:last-child { margin-bottom: 0; }
+    .insight-card.warn .insight-row { background: rgba(245,158,11,0.07); }
+    .insight-card.safe .insight-row { background: rgba(16,185,129,0.07); }
+    .insight-row:hover { filter: brightness(0.97); }
+    .insight-subj { font-weight: 600; color: var(--ink-light); }
+    .insight-val  { font-weight: 700; }
+    .insight-card.warn .insight-val { color: var(--amber-d); }
+    .insight-card.safe .insight-val { color: var(--emerald-d); }
+
+    .insight-empty {
+      text-align: center;
+      color: var(--mist);
+      font-size: 0.85rem;
+      padding: var(--space-4) 0;
+    }
+
+    /* Data actions */
+    .data-actions {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-3);
+      margin-bottom: var(--space-6);
+    }
+    .data-action-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-xl);
+      padding: var(--space-5) var(--space-4);
+      text-align: center;
+      cursor: pointer;
+      transition: all var(--t-base) var(--ease);
+      box-shadow: var(--shadow-xs);
+    }
+    .data-action-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+    .data-action-icon {
+      width: 46px; height: 46px;
+      border-radius: var(--r-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto var(--space-3);
+      font-size: 1.1rem;
+      color: white;
+    }
+    .data-action-card:nth-child(1) .data-action-icon { background: linear-gradient(135deg, var(--brand), var(--brand-l)); }
+    .data-action-card:nth-child(2) .data-action-icon { background: linear-gradient(135deg, var(--emerald-d), var(--emerald-l)); }
+    .data-action-card:nth-child(3) .data-action-icon { background: linear-gradient(135deg, var(--rose-d), var(--rose)); }
+    .data-action-title { font-weight: 700; font-size: 0.88rem; color: var(--ink-light); margin-bottom: 2px; }
+    .data-action-desc  { font-size: 0.75rem; color: var(--mist); }
+
+    /* Page title area */
+    .stats-title-area {
+      margin-bottom: var(--space-6);
+    }
+    .stats-title-area h1 {
+      font-family: var(--font-display);
+      font-size: 1.9rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      color: var(--ink);
+      margin-bottom: var(--space-1);
+    }
+    .stats-title-area p { color: var(--slate); font-size: 0.9rem; }
+
+    /* Empty state */
+    .empty-stats {
+      text-align: center;
+      padding: var(--space-16) var(--space-8);
+      background: var(--surface);
+      border: 1px dashed var(--border-md);
+      border-radius: var(--r-xl);
+    }
+    .empty-stats-icon {
+      font-size: 3rem;
+      color: var(--cloud);
+      margin-bottom: var(--space-4);
+    }
+    .empty-stats h3 {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--ink-light);
+      margin-bottom: var(--space-2);
+    }
+    .empty-stats p { color: var(--mist); font-size: 0.9rem; margin-bottom: var(--space-5); }
+
+    @media (max-width: 640px) {
+      .overview-row { grid-template-columns: repeat(3,1fr); gap: var(--space-2); }
+      .ov-value { font-size: 1.5rem; }
+      .ov-icon  { width: 36px; height: 36px; font-size: 0.9rem; }
+      .charts-grid { grid-template-columns: 1fr; }
+      .chart-wrap { height: 200px; }
+      .subj-stats { grid-template-columns: repeat(2, 1fr); }
+      .insights-grid { grid-template-columns: 1fr; }
+      .data-actions { grid-template-columns: 1fr; }
+      .data-action-card { display: flex; align-items: center; gap: var(--space-4); text-align: left; }
+      .data-action-icon { flex-shrink: 0; margin: 0; }
+      .stats-title-area h1 { font-size: 1.5rem; }
+    }
+
+    @media (max-width: 400px) {
+      .subj-stats { grid-template-columns: repeat(2,1fr); }
+      .cal-dow { font-size: 0.6rem; }
+      .cal-cell { font-size: 0.72rem; border-radius: var(--r-sm); }
+    }
+  </style>
 </head>
 <body>
-    <!-- Decorative Elements -->
-    <div class="deco-circle deco-1"></div>
-    <div class="deco-square deco-3"></div>
-    
-    <div class="app-container">
-        <!-- Header -->
-        <header class="glass-header">
-            <div class="header-content">
-                <div class="header-left">
-                    <a href="index.html" class="menu-trigger">
-                        <i class="fas fa-arrow-left"></i>
-                    </a>
-                    <div class="app-brand">
-                        <h1>Attendo</h1>
-                        <span class="subtitle">Statistics</span>
-                    </div>
-                </div>
-                <div class="header-right">
-                    <button class="icon-btn" id="exportStatsBtn" title="Export Statistics">
-                        <i class="fas fa-download"></i>
-                    </button>
-                </div>
-            </div>
-        </header>
 
-        <!-- Stats Container -->
-        <div class="stats-container">
-            <!-- Header -->
-            <div class="stats-header">
-                <h1 class="stats-title">Academic Insights</h1>
-                <p class="stats-subtitle">Track your progress and optimize your attendance strategy</p>
-            </div>
-
-            <!-- Overview -->
-            <div class="overview-grid">
-                <div class="overview-card">
-                    <div class="overview-icon">
-                        <i class="fas fa-calendar-alt"></i>
-                    </div>
-                    <div class="overview-value" id="totalClasses">0</div>
-                    <div class="overview-label">Total Classes</div>
-                </div>
-                <div class="overview-card">
-                    <div class="overview-icon">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    <div class="overview-value" id="attendedClasses">0</div>
-                    <div class="overview-label">Attended</div>
-                </div>
-                <div class="overview-card">
-                    <div class="overview-icon">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                    <div class="overview-value" id="overallPercentage">0%</div>
-                    <div class="overview-label">Overall Percentage</div>
-                </div>
-            </div>
-
-            <!-- Charts -->
-            <div class="charts-grid">
-                <div class="chart-card">
-                    <div class="chart-header">
-                        <i class="fas fa-chart-pie"></i>
-                        <h3>Attendance Distribution</h3>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="attendanceChart"></canvas>
-                    </div>
-                </div>
-                <div class="chart-card">
-                    <div class="chart-header">
-                        <i class="fas fa-chart-bar"></i>
-                        <h3>Weekly Pattern</h3>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="weeklyChart"></canvas>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Subject Performance -->
-            <div class="performance-list" id="performanceList">
-                <!-- Subject cards will be injected here -->
-            </div>
-
-            <!-- Calendar -->
-            <div class="calendar-card">
-                <div class="calendar-header">
-                    <h2 class="calendar-title" id="currentMonth">March 2024</h2>
-                    <div class="calendar-nav">
-                        <button class="nav-btn" id="prevMonth">
-                            <i class="fas fa-chevron-left"></i>
-                        </button>
-                        <button class="nav-btn" id="todayMonth">
-                            Today
-                        </button>
-                        <button class="nav-btn" id="nextMonth">
-                            <i class="fas fa-chevron-right"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="calendar" id="calendar">
-                    <!-- Calendar will be generated here -->
-                </div>
-            </div>
-
-            <!-- Insights -->
-            <div class="insights-grid">
-                <div class="insight-card warning">
-                    <div class="insight-header">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        <h3>At Risk Subjects</h3>
-                    </div>
-                    <div class="insight-list" id="riskSubjects">
-                        <!-- Risk subjects will be added here -->
-                    </div>
-                </div>
-                <div class="insight-card success">
-                    <div class="insight-header">
-                        <i class="fas fa-shield-alt"></i>
-                        <h3>Safe to Miss</h3>
-                    </div>
-                    <div class="insight-list" id="safeToMiss">
-                        <!-- Safe to miss info will be added here -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- Actions -->
-            <div class="actions-grid">
-                <div class="action-card" id="exportDataBtn">
-                    <div class="action-icon">
-                        <i class="fas fa-download"></i>
-                    </div>
-                    <div class="action-title">Export Data</div>
-                    <div class="action-desc">Download your attendance data as JSON</div>
-                </div>
-                <div class="action-card" id="importDataBtn">
-                    <div class="action-icon">
-                        <i class="fas fa-upload"></i>
-                    </div>
-                    <div class="action-title">Import Data</div>
-                    <div class="action-desc">Restore from backup</div>
-                </div>
-                <div class="action-card" id="clearDataBtn">
-                    <div class="action-icon">
-                        <i class="fas fa-trash-alt"></i>
-                    </div>
-                    <div class="action-title">Reset All</div>
-                    <div class="action-desc">Clear all attendance data</div>
-                </div>
-            </div>
-
-            <!-- Empty State -->
-            <div class="empty-stats hidden" id="emptyStats">
-                <div class="empty-icon">
-                    <i class="fas fa-chart-line"></i>
-                </div>
-                <h3>No Data Available</h3>
-                <p>Start tracking attendance to see statistics</p>
-                <a href="index.html" class="btn btn-primary">
-                    <i class="fas fa-rocket"></i> Start Tracking
-                </a>
-            </div>
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="header-brand">
+        <a href="index.html" class="brand-logo" style="text-decoration:none">
+          <i class="fas fa-arrow-left"></i>
+        </a>
+        <div class="brand-text">
+          <h1>Attendo</h1>
+          <span>Statistics</span>
         </div>
+      </div>
+      <div class="header-meta">
+        <button class="btn-icon" id="exportStatsBtn" title="Export data">
+          <i class="fas fa-download"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main class="page-wrap">
+
+    <!-- Title -->
+    <div class="stats-title-area animate-up">
+      <h1>Academic Insights</h1>
+      <p>Track your progress, spot risks, and optimize your strategy.</p>
     </div>
 
-    <!-- Toast -->
-    <div class="toast-container" id="toastContainer"></div>
+    <!-- Empty state -->
+    <div class="empty-stats hidden animate-up" id="emptyStats">
+      <div class="empty-stats-icon"><i class="fas fa-chart-line"></i></div>
+      <h3>No data yet</h3>
+      <p>Start tracking attendance on the dashboard to see insights here.</p>
+      <a href="index.html" class="btn btn-primary"><i class="fas fa-arrow-left"></i> Go to Dashboard</a>
+    </div>
 
-    <script src="js/utils.js"></script>
-    <script src="js/storage.js"></script>
-    <script src="js/stats.js"></script>
+    <!-- Overview -->
+    <div id="statsContent">
+      <div class="overview-row animate-up">
+        <div class="ov-card">
+          <div class="ov-icon ov-icon-brand"><i class="fas fa-calendar-alt"></i></div>
+          <div class="ov-value" id="ovTotal">–</div>
+          <div class="ov-label">Total Classes</div>
+        </div>
+        <div class="ov-card">
+          <div class="ov-icon ov-icon-emerald"><i class="fas fa-check-circle"></i></div>
+          <div class="ov-value" id="ovAttended">–</div>
+          <div class="ov-label">Attended</div>
+        </div>
+        <div class="ov-card">
+          <div class="ov-icon ov-icon-amber"><i class="fas fa-percent"></i></div>
+          <div class="ov-value" id="ovPercent">–</div>
+          <div class="ov-label">Overall %</div>
+        </div>
+      </div>
+
+      <!-- Charts -->
+      <div class="charts-grid animate-up animate-up-d1">
+        <div class="chart-card">
+          <div class="chart-card-title"><i class="fas fa-chart-pie"></i> Attendance Split</div>
+          <div class="chart-wrap"><canvas id="pieChart"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-card-title"><i class="fas fa-chart-bar"></i> Weekly Pattern</div>
+          <div class="chart-wrap"><canvas id="barChart"></canvas></div>
+        </div>
+      </div>
+
+      <!-- Subject Performance -->
+      <div class="subject-list animate-up animate-up-d2">
+        <h2>Subject Performance</h2>
+        <div id="subjList"></div>
+      </div>
+
+      <!-- Calendar -->
+      <div class="calendar-section animate-up animate-up-d2">
+        <div class="cal-header">
+          <div class="cal-month" id="calMonthLabel">–</div>
+          <div class="cal-nav">
+            <button class="cal-nav-btn" id="calPrev"><i class="fas fa-chevron-left"></i></button>
+            <button class="cal-today-btn" id="calToday">Today</button>
+            <button class="cal-nav-btn" id="calNext"><i class="fas fa-chevron-right"></i></button>
+          </div>
+        </div>
+        <div class="cal-grid" id="calGrid"></div>
+        <div class="cal-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:rgba(16,185,129,0.35)"></div> Full attendance</div>
+          <div class="legend-item"><div class="legend-dot" style="background:rgba(245,158,11,0.35)"></div> Partial</div>
+          <div class="legend-item"><div class="legend-dot" style="background:rgba(244,63,94,0.25)"></div> Missed</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--brand)"></div> Today</div>
+        </div>
+      </div>
+
+      <!-- Insights -->
+      <div class="insights-grid animate-up animate-up-d3">
+        <div class="insight-card warn">
+          <div class="insight-head">
+            <i class="fas fa-exclamation-triangle"></i>
+            <h3>At Risk</h3>
+          </div>
+          <div class="insight-list" id="atRiskList"></div>
+        </div>
+        <div class="insight-card safe">
+          <div class="insight-head">
+            <i class="fas fa-shield-alt"></i>
+            <h3>Safe to Miss</h3>
+          </div>
+          <div class="insight-list" id="safeList"></div>
+        </div>
+      </div>
+
+      <!-- Data Actions -->
+      <div class="data-actions animate-up">
+        <div class="data-action-card" id="actExport">
+          <div class="data-action-icon"><i class="fas fa-download"></i></div>
+          <div><div class="data-action-title">Export</div><div class="data-action-desc">Download backup</div></div>
+        </div>
+        <div class="data-action-card" id="actImport">
+          <div class="data-action-icon"><i class="fas fa-upload"></i></div>
+          <div><div class="data-action-title">Import</div><div class="data-action-desc">Restore backup</div></div>
+        </div>
+        <div class="data-action-card" id="actReset">
+          <div class="data-action-icon"><i class="fas fa-trash-alt"></i></div>
+          <div><div class="data-action-title">Reset</div><div class="data-action-desc">Clear all data</div></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Bottom Nav -->
+  <nav class="bottom-nav">
+    <a href="index.html" class="nav-item">
+      <i class="fas fa-home"></i><span>Today</span>
+    </a>
+    <a href="stats.html" class="nav-item active">
+      <i class="fas fa-chart-bar"></i><span>Stats</span>
+    </a>
+    <a href="setup.html" class="nav-item">
+      <i class="fas fa-sliders"></i><span>Setup</span>
+    </a>
+  </nav>
+
+  <div class="toast-container" id="toastContainer"></div>
+  <input type="file" id="importFile" accept=".json" style="display:none">
+
+  <script src="js/utils.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/stats.js"></script>
 </body>
 </html>

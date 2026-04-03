@@ -1,709 +1,566 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Attendo • Setup</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/glass.css">
-    <link rel="stylesheet" href="css/style.css">
-    <style>
-        /* Setup Page Specific */
-        .setup-container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: var(--spacing-md) 0;
-        }
-
-        .setup-header {
-            text-align: center;
-            margin-bottom: var(--spacing-xl);
-        }
-
-        .setup-title {
-            font-family: var(--font-accent);
-            font-size: 2.5rem;
-            margin-bottom: var(--spacing-sm);
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .setup-subtitle {
-            color: var(--primary-light);
-            font-size: 1.1rem;
-        }
-
-        .setup-stepper {
-            display: flex;
-            justify-content: center;
-            gap: var(--spacing-md);
-            margin-bottom: var(--spacing-xl);
-        }
-
-        .step {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.5rem;
-            position: relative;
-        }
-
-        .step-number {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: var(--glass-bg);
-            border: 2px solid var(--glass-border);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            font-size: 1.2rem;
-            transition: all var(--transition);
-        }
-
-        .step.active .step-number {
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
-            color: white;
-            border-color: var(--primary);
-            transform: scale(1.1);
-        }
-
-        .step-label {
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: var(--primary-light);
-        }
-
-        .step.active .step-label {
-            color: var(--primary);
-        }
-
-        .step-line {
-            position: absolute;
-            top: 25px;
-            left: 100%;
-            width: 100px;
-            height: 2px;
-            background: var(--glass-border);
-            z-index: -1;
-        }
-
-        .step:last-child .step-line {
-            display: none;
-        }
-
-        .setup-content {
-            min-height: 500px;
-        }
-
-        .setup-step {
-            display: none;
-            animation: fadeIn 0.5s ease;
-        }
-
-        .setup-step.active {
-            display: block;
-        }
-
-        .step-card {
-            background: var(--glass-bg);
-            backdrop-filter: var(--glass-blur);
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--glass-border);
-            padding: var(--spacing-xl);
-            margin-bottom: var(--spacing-lg);
-        }
-
-        .step-header {
-            text-align: center;
-            margin-bottom: var(--spacing-xl);
-        }
-
-        .step-icon {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto var(--spacing-md);
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            color: white;
-        }
-
-        .step-header h2 {
-            font-family: var(--font-accent);
-            margin-bottom: var(--spacing-sm);
-            color: var(--primary);
-        }
-
-        .step-header p {
-            color: var(--primary-light);
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .subject-form {
-            display: flex;
-            gap: var(--spacing-sm);
-            margin-bottom: var(--spacing-lg);
-        }
-
-        .subject-input {
-            flex: 1;
-            padding: 1rem;
-            border: 2px solid var(--glass-border);
-            border-radius: var(--radius-md);
-            font-family: var(--font-primary);
-            font-size: 1rem;
-            transition: all var(--transition);
-            background: var(--glass-bg);
-        }
-
-        .subject-input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(26, 35, 126, 0.1);
-        }
-
-        .subjects-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: var(--spacing-md);
-            margin-bottom: var(--spacing-lg);
-        }
-
-        .subject-card {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: var(--radius-lg);
-            padding: var(--spacing-md);
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-md);
-            transition: all var(--transition);
-        }
-
-        .subject-card:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--glass-shadow);
-        }
-
-        .subject-color {
-            width: 40px;
-            height: 40px;
-            border-radius: var(--radius-md);
-        }
-
-        .subject-info {
-            flex: 1;
-        }
-
-        .subject-name {
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-            color: var(--primary);
-        }
-
-        .subject-meta {
-            font-size: 0.9rem;
-            color: var(--primary-light);
-        }
-
-        .subject-actions {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .action-btn {
-            width: 36px;
-            height: 36px;
-            border-radius: var(--radius-md);
-            border: none;
-            background: var(--glass-bg);
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all var(--transition);
-        }
-
-        .action-btn:hover {
-            background: var(--primary);
-            color: white;
-        }
-
-        .empty-subjects {
-            text-align: center;
-            padding: var(--spacing-xl);
-            grid-column: 1 / -1;
-        }
-
-        .empty-icon {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto var(--spacing-md);
-            background: linear-gradient(135deg, var(--primary-light), var(--accent));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            color: white;
-        }
-
-        .timetable-container {
-            margin-bottom: var(--spacing-lg);
-        }
-
-        .timetable-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 8px;
-            max-height: none;
-            overflow-y: visible;
-            padding-right: 0;
-        }
-
-        .day-column {
-            background: var(--glass-bg);
-            border: 2px dashed var(--glass-border);
-            border-radius: var(--radius-lg);
-            padding: var(--spacing-sm);
-            min-height: 120px;
-            transition: all var(--transition);
-        }
-
-        .day-column.drag-over {
-            background: rgba(26, 35, 126, 0.05);
-            border-color: var(--primary);
-            border-style: solid;
-        }
-
-        .day-header {
-            text-align: center;
-            font-weight: 600;
-            margin-bottom: var(--spacing-sm);
-            color: var(--primary);
-            padding-bottom: var(--spacing-xs);
-            border-bottom: 1px solid var(--glass-border);
-            font-size: 0.85rem;
-        }
-
-        .day-subjects {
-            display: flex;
-            flex-direction: column;
-            gap: var(--spacing-xs);
-            min-height: 80px;
-        }
-
-        .day-subject {
-            background: var(--primary);
-            color: white;
-            padding: 0.4rem 0.3rem;
-            border-radius: var(--radius-sm);
-            font-size: 0.75rem;
-            text-align: center;
-            cursor: move;
-            position: relative;
-            transition: all var(--transition);
-            word-break: break-word;
-            line-height: 1.2;
-        }
-
-        .day-subject:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(26, 35, 126, 0.2);
-        }
-
-        .remove-subject {
-            position: absolute;
-            top: -6px;
-            right: -6px;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            background: var(--danger);
-            color: white;
-            border: none;
-            font-size: 10px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: opacity var(--transition);
-        }
-
-        .day-subject:hover .remove-subject {
-            opacity: 1;
-        }
-
-        .empty-day {
-            text-align: center;
-            color: var(--primary-light);
-            font-style: italic;
-            padding: var(--spacing-sm);
-            font-size: 0.8rem;
-        }
-
-        .available-subjects {
-            margin-top: var(--spacing-xl);
-        }
-
-        .available-header {
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-sm);
-            margin-bottom: var(--spacing-md);
-        }
-
-        .available-header i {
-            color: var(--primary);
-            font-size: 1.2rem;
-        }
-
-        .available-header h3 {
-            margin: 0;
-            color: var(--primary);
-        }
-
-        .drag-items {
-            display: flex;
-            flex-wrap: wrap;
-            gap: var(--spacing-sm);
-        }
-
-        .drag-item {
-            padding: 0.75rem 1rem;
-            background: var(--glass-bg);
-            border: 2px solid var(--glass-border);
-            border-radius: var(--radius-md);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            cursor: move;
-            transition: all var(--transition);
-            user-select: none;
-        }
-
-        .drag-item:hover {
-            border-color: var(--primary);
-            transform: translateY(-2px);
-        }
-
-        .drag-item.dragging {
-            opacity: 0.5;
-            border-style: dashed;
-        }
-
-        .target-slider {
-            width: 100%;
-            margin: var(--spacing-md) 0;
-            -webkit-appearance: none;
-            appearance: none;
-            height: 8px;
-            background: var(--glass-border);
-            border-radius: 4px;
-            outline: none;
-        }
-
-        .target-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: var(--primary);
-            cursor: pointer;
-            border: 3px solid white;
-            box-shadow: 0 2px 8px rgba(26, 35, 126, 0.3);
-        }
-
-        .target-value {
-            display: inline-block;
-            min-width: 50px;
-            text-align: center;
-            font-weight: 600;
-            color: var(--primary);
-        }
-
-        .setup-actions {
-            display: flex;
-            justify-content: space-between;
-            margin-top: var(--spacing-xl);
-            padding-top: var(--spacing-lg);
-            border-top: 1px solid var(--glass-border);
-        }
-
-        .btn-back {
-            background: transparent;
-            border: 2px solid var(--glass-border);
-            color: var(--primary);
-        }
-
-        .btn-back:hover {
-            border-color: var(--primary);
-            background: rgba(26, 35, 126, 0.05);
-        }
-
-        .btn-next {
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
-            color: white;
-            border: none;
-        }
-
-        .btn-next:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(26, 35, 126, 0.3);
-        }
-
-        .btn-done {
-            background: linear-gradient(135deg, var(--accent), #34d399);
-            color: white;
-            border: none;
-        }
-
-        .btn-done:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
-        }
-
-        /* Mobile adjustments for timetable */
-        @media (max-width: 768px) {
-            .timetable-grid {
-                grid-template-columns: repeat(7, 1fr);
-                gap: 4px;
-            }
-            
-            .day-column {
-                padding: 6px 3px;
-                min-height: 90px;
-            }
-            
-            .day-header {
-                font-size: 0.7rem;
-                margin-bottom: 6px;
-            }
-            
-            .day-subject {
-                font-size: 0.6rem;
-                padding: 3px 2px;
-            }
-            
-            .remove-subject {
-                width: 14px;
-                height: 14px;
-                font-size: 8px;
-                top: -4px;
-                right: -4px;
-                opacity: 1;
-            }
-            
-            .drag-items {
-                display: flex;
-                flex-wrap: nowrap;
-                overflow-x: auto;
-                padding-bottom: 8px;
-            }
-            
-            .drag-item {
-                flex-shrink: 0;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .setup-stepper {
-                flex-wrap: wrap;
-            }
-            
-            .step-line {
-                display: none;
-            }
-            
-            .subject-form {
-                flex-direction: column;
-            }
-            
-            .subjects-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .setup-actions {
-                flex-direction: column;
-                gap: var(--spacing-sm);
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Attendo • Setup</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/theme.css">
+  <style>
+    /* ─── SETUP SPECIFIC ─── */
+
+    /* Stepper */
+    .stepper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      margin-bottom: var(--space-8);
+    }
+    .step-node {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-2);
+    }
+    .step-circle {
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      background: var(--surface-2);
+      border: 2px solid var(--border-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 0.95rem;
+      color: var(--slate);
+      transition: all var(--t-base) var(--ease);
+    }
+    .step-node.active .step-circle {
+      background: var(--brand);
+      border-color: var(--brand);
+      color: white;
+      box-shadow: 0 0 0 4px rgba(79,70,229,0.15);
+      transform: scale(1.05);
+    }
+    .step-node.done .step-circle {
+      background: var(--emerald);
+      border-color: var(--emerald);
+      color: white;
+    }
+    .step-lbl {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--mist);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+    }
+    .step-node.active .step-lbl { color: var(--brand); }
+    .step-node.done .step-lbl  { color: var(--emerald-d); }
+    .step-line {
+      width: 60px; height: 2px;
+      background: var(--border);
+      margin-bottom: 20px;
+    }
+    .step-line.done { background: var(--emerald); }
+
+    /* Step card */
+    .step-block {
+      display: none;
+      animation: fade-up 0.35s var(--ease) both;
+    }
+    .step-block.active { display: block; }
+
+    .step-intro {
+      text-align: center;
+      padding: var(--space-6) var(--space-4);
+      margin-bottom: var(--space-6);
+    }
+    .step-intro-icon {
+      width: 64px; height: 64px;
+      border-radius: var(--r-xl);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto var(--space-4);
+      font-size: 1.6rem;
+      color: white;
+    }
+    .icon-brand   { background: linear-gradient(135deg, var(--brand), var(--brand-l)); }
+    .icon-emerald { background: linear-gradient(135deg, var(--emerald-d), var(--emerald-l)); }
+    .icon-amber   { background: linear-gradient(135deg, var(--amber-d), var(--amber)); }
+    .step-intro h2 {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--ink);
+      letter-spacing: -0.03em;
+      margin-bottom: var(--space-2);
+    }
+    .step-intro p { color: var(--slate); font-size: 0.9rem; }
+
+    /* Subject input */
+    .subject-input-row {
+      display: flex;
+      gap: var(--space-3);
+      margin-bottom: var(--space-5);
+    }
+    .subject-input {
+      flex: 1;
+      padding: var(--space-3) var(--space-4);
+      border: 1px solid var(--border-md);
+      border-radius: var(--r-md);
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      background: var(--surface);
+      color: var(--ink);
+      transition: all var(--t-fast);
+    }
+    .subject-input:focus {
+      outline: none;
+      border-color: var(--brand);
+      box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
+    }
+    .subject-input::placeholder { color: var(--mist); }
+
+    /* Subjects grid */
+    .subjects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: var(--space-3);
+      margin-bottom: var(--space-4);
+    }
+
+    .subj-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: var(--space-4);
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      box-shadow: var(--shadow-xs);
+      transition: all var(--t-base) var(--ease);
+    }
+    .subj-item:hover { box-shadow: var(--shadow-sm); transform: translateY(-1px); }
+
+    .subj-color {
+      width: 36px; height: 36px;
+      border-radius: var(--r-md);
+      flex-shrink: 0;
+    }
+    .subj-item-info { flex: 1; min-width: 0; }
+    .subj-item-name { font-weight: 600; color: var(--ink); font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .subj-item-meta { font-size: 0.78rem; color: var(--slate); margin-top: 2px; }
+
+    .subj-item-actions { display: flex; gap: var(--space-2); flex-shrink: 0; }
+    .subj-action-btn {
+      width: 30px; height: 30px;
+      border-radius: var(--r-sm);
+      border: none;
+      background: var(--surface-2);
+      color: var(--slate);
+      font-size: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all var(--t-fast);
+    }
+    .subj-action-btn:hover { background: var(--rose); color: white; }
+    .subj-action-btn.edit:hover { background: var(--brand); color: white; }
+
+    .empty-subjects {
+      grid-column: 1/-1;
+      text-align: center;
+      padding: var(--space-10);
+      color: var(--mist);
+      font-size: 0.9rem;
+    }
+    .empty-subjects i { font-size: 2rem; display: block; margin-bottom: var(--space-3); color: var(--cloud); }
+
+    /* Timetable */
+    .timetable-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: var(--space-2);
+      margin-bottom: var(--space-6);
+    }
+    .day-col {
+      background: var(--surface);
+      border: 1.5px dashed var(--border-md);
+      border-radius: var(--r-lg);
+      padding: var(--space-3) var(--space-2);
+      min-height: 110px;
+      transition: all var(--t-fast);
+    }
+    .day-col.drag-over {
+      border-color: var(--brand);
+      border-style: solid;
+      background: rgba(79,70,229,0.04);
+    }
+    .day-col-head {
+      text-align: center;
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--slate);
+      padding-bottom: var(--space-2);
+      margin-bottom: var(--space-2);
+      border-bottom: 1px solid var(--border);
+    }
+    .day-col-subjects {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-1);
+      min-height: 60px;
+    }
+    .day-subject-chip {
+      border-radius: var(--r-sm);
+      padding: 4px 3px;
+      font-size: 0.6rem;
+      font-weight: 600;
+      text-align: center;
+      color: white;
+      cursor: move;
+      position: relative;
+      line-height: 1.3;
+      word-break: break-word;
+      transition: all var(--t-fast);
+    }
+    .day-subject-chip:hover { filter: brightness(1.1); }
+    .chip-remove {
+      position: absolute;
+      top: -5px; right: -5px;
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      background: var(--rose);
+      color: white;
+      border: none;
+      font-size: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity var(--t-fast);
+    }
+    .day-subject-chip:hover .chip-remove { opacity: 1; }
+
+    /* On mobile, always show remove button */
+    @media (hover: none) {
+      .chip-remove { opacity: 1; }
+    }
+
+    .empty-col-hint {
+      font-size: 0.6rem;
+      color: var(--cloud);
+      text-align: center;
+      padding-top: var(--space-2);
+    }
+
+    /* Drag items */
+    .drag-pool-label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--slate);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: var(--space-3);
+    }
+    .drag-pool {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+    }
+    .drag-pill {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-3);
+      background: var(--surface);
+      border: 1px solid var(--border-md);
+      border-radius: var(--r-full);
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--ink-light);
+      cursor: grab;
+      user-select: none;
+      transition: all var(--t-fast);
+      box-shadow: var(--shadow-xs);
+    }
+    .drag-pill:hover { border-color: var(--brand); color: var(--brand); }
+    .drag-pill.dragging { opacity: 0.4; }
+    .drag-pill-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* Targets */
+    .target-row {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: var(--space-5);
+      margin-bottom: var(--space-3);
+      box-shadow: var(--shadow-xs);
+    }
+    .target-row-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-4);
+    }
+    .target-subj-name {
+      font-weight: 700;
+      color: var(--ink);
+      font-size: 0.95rem;
+    }
+    .target-val-display {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--brand);
+    }
+    .target-slider {
+      width: 100%;
+      -webkit-appearance: none;
+      appearance: none;
+      height: 6px;
+      background: var(--surface-3);
+      border-radius: var(--r-full);
+      outline: none;
+      cursor: pointer;
+    }
+    .target-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      background: var(--brand);
+      cursor: pointer;
+      border: 3px solid white;
+      box-shadow: 0 2px 8px rgba(79,70,229,0.35);
+    }
+    .target-slider::-moz-range-thumb {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      background: var(--brand);
+      cursor: pointer;
+      border: 3px solid white;
+      box-shadow: 0 2px 8px rgba(79,70,229,0.35);
+    }
+    .target-hint {
+      font-size: 0.75rem;
+      color: var(--mist);
+      margin-top: var(--space-2);
+    }
+
+    /* Step footer */
+    .step-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: var(--space-5);
+      border-top: 1px solid var(--border);
+      margin-top: var(--space-6);
+    }
+
+    /* Completion card */
+    .completion-card {
+      text-align: center;
+      padding: var(--space-10) var(--space-6);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-xl);
+      box-shadow: var(--shadow-sm);
+    }
+    .completion-icon {
+      width: 80px; height: 80px;
+      border-radius: var(--r-xl);
+      background: linear-gradient(135deg, var(--emerald-d), var(--emerald-l));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto var(--space-5);
+      font-size: 2rem;
+      color: white;
+      box-shadow: 0 8px 24px rgba(16,185,129,0.35);
+    }
+    .completion-card h2 {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      color: var(--ink);
+      margin-bottom: var(--space-2);
+    }
+    .completion-card p { color: var(--slate); margin-bottom: var(--space-6); }
+
+    /* Page title */
+    .page-title-area {
+      margin-bottom: var(--space-6);
+    }
+    .page-title-area h1 {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      color: var(--ink);
+      margin-bottom: 4px;
+    }
+    .page-title-area p { color: var(--slate); font-size: 0.9rem; }
+
+    @media (max-width: 600px) {
+      .subject-input-row { flex-direction: column; }
+      .subjects-grid { grid-template-columns: 1fr; }
+      .stepper { gap: 0; }
+      .step-line { width: 36px; }
+      .step-circle { width: 36px; height: 36px; font-size: 0.85rem; }
+      .timetable-grid { gap: var(--space-1); }
+      .day-col { padding: var(--space-2) var(--space-1); min-height: 80px; }
+      .day-col-head { font-size: 0.55rem; }
+      .day-subject-chip { font-size: 0.52rem; }
+      .drag-pool { flex-wrap: nowrap; overflow-x: auto; padding-bottom: var(--space-2); }
+      .drag-pill { flex-shrink: 0; }
+      .step-footer { flex-direction: column; gap: var(--space-3); }
+      .step-footer .btn { width: 100%; justify-content: center; }
+    }
+  </style>
 </head>
 <body>
-    <!-- Decorative Elements -->
-    <div class="deco-circle deco-1"></div>
-    <div class="deco-square deco-3"></div>
-    
-    <div class="app-container">
-        <!-- Header -->
-        <header class="glass-header">
-            <div class="header-content">
-                <div class="header-left">
-                    <a href="index.html" class="menu-trigger">
-                        <i class="fas fa-arrow-left"></i>
-                    </a>
-                    <div class="app-brand">
-                        <h1>Attendo</h1>
-                        <span class="subtitle">Setup Wizard</span>
-                    </div>
-                </div>
-            </div>
-        </header>
 
-        <!-- Setup Container -->
-        <div class="setup-container">
-            <!-- Stepper -->
-            <div class="setup-stepper">
-                <div class="step active" data-step="1">
-                    <div class="step-number">1</div>
-                    <span class="step-label">Subjects</span>
-                    <div class="step-line"></div>
-                </div>
-                <div class="step" data-step="2">
-                    <div class="step-number">2</div>
-                    <span class="step-label">Timetable</span>
-                    <div class="step-line"></div>
-                </div>
-                <div class="step" data-step="3">
-                    <div class="step-number">3</div>
-                    <span class="step-label">Targets</span>
-                </div>
-            </div>
-
-            <!-- Setup Content -->
-            <div class="setup-content">
-                <!-- Step 1: Subjects -->
-                <div class="setup-step active" id="step1">
-                    <div class="step-card">
-                        <div class="step-header">
-                            <div class="step-icon">
-                                <i class="fas fa-book"></i>
-                            </div>
-                            <h2>Add Your Subjects</h2>
-                            <p>Enter all the subjects you want to track attendance for. You can edit or delete them later.</p>
-                        </div>
-
-                        <div class="subject-form">
-                            <input type="text" 
-                                   class="subject-input" 
-                                   id="subjectName" 
-                                   placeholder="Enter subject name (e.g., Mathematics)">
-                            <button class="btn btn-primary" id="addSubjectBtn">
-                                <i class="fas fa-plus"></i> Add
-                            </button>
-                        </div>
-
-                        <div class="subjects-grid" id="subjectsGrid">
-                            <!-- Subjects will be added here -->
-                        </div>
-
-                        <div class="setup-actions">
-                            <div></div> <!-- Empty div for spacing -->
-                            <button class="btn btn-next" data-next="2">
-                                Next: Timetable <i class="fas fa-arrow-right"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Step 2: Timetable -->
-                <div class="setup-step" id="step2">
-                    <div class="step-card">
-                        <div class="step-header">
-                            <div class="step-icon">
-                                <i class="fas fa-calendar-alt"></i>
-                            </div>
-                            <h2>Create Weekly Timetable</h2>
-                            <p>Drag subjects from the list below to the days when you have classes.</p>
-                        </div>
-
-                        <div class="timetable-container">
-                            <div class="timetable-grid" id="timetableGrid">
-                                <!-- Days will be generated here -->
-                            </div>
-                        </div>
-
-                        <div class="available-subjects">
-                            <div class="available-header">
-                                <i class="fas fa-grip-vertical"></i>
-                                <h3>Drag Subjects Here</h3>
-                            </div>
-                            <div class="drag-items" id="dragItems">
-                                <!-- Drag items will be added here -->
-                            </div>
-                        </div>
-
-                        <div class="setup-actions">
-                            <button class="btn btn-back" data-prev="1">
-                                <i class="fas fa-arrow-left"></i> Back
-                            </button>
-                            <button class="btn btn-next" data-next="3">
-                                Next: Targets <i class="fas fa-arrow-right"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Step 3: Targets -->
-                <div class="setup-step" id="step3">
-                    <div class="step-card">
-                        <div class="step-header">
-                            <div class="step-icon">
-                                <i class="fas fa-bullseye"></i>
-                            </div>
-                            <h2>Set Attendance Targets</h2>
-                            <p>Set minimum attendance percentage for each subject. Aim high, but be realistic!</p>
-                        </div>
-
-                        <div class="targets-list" id="targetsList">
-                            <!-- Targets will be added here -->
-                        </div>
-
-                        <div class="setup-complete hidden" id="setupComplete">
-                            <div class="step-header">
-                                <div class="step-icon" style="background: linear-gradient(135deg, var(--accent), #34d399);">
-                                    <i class="fas fa-check"></i>
-                                </div>
-                                <h2>Setup Complete! 🎉</h2>
-                                <p>Your attendance tracker is ready to use. Start tracking your classes today!</p>
-                                <a href="index.html" class="btn btn-done btn-lg">
-                                    <i class="fas fa-rocket"></i> Launch Dashboard
-                                </a>
-                            </div>
-                        </div>
-
-                        <div class="setup-actions">
-                            <button class="btn btn-back" data-prev="2">
-                                <i class="fas fa-arrow-left"></i> Back
-                            </button>
-                            <button class="btn btn-done" id="saveSetupBtn">
-                                <i class="fas fa-save"></i> Save & Finish
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="header-brand">
+        <a href="index.html" class="brand-logo" style="text-decoration:none">
+          <i class="fas fa-arrow-left"></i>
+        </a>
+        <div class="brand-text">
+          <h1>Attendo</h1>
+          <span>Setup Wizard</span>
         </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main class="page-wrap">
+
+    <div class="page-title-area animate-up">
+      <h1>Configure Your Tracker</h1>
+      <p>Set up subjects, timetable, and attendance targets.</p>
     </div>
 
-    <!-- Toast -->
-    <div class="toast-container" id="toastContainer"></div>
+    <!-- Stepper -->
+    <div class="stepper animate-up animate-up-d1">
+      <div class="step-node active" id="stepNode1">
+        <div class="step-circle">1</div>
+        <span class="step-lbl">Subjects</span>
+      </div>
+      <div class="step-line" id="stepLine1"></div>
+      <div class="step-node" id="stepNode2">
+        <div class="step-circle">2</div>
+        <span class="step-lbl">Timetable</span>
+      </div>
+      <div class="step-line" id="stepLine2"></div>
+      <div class="step-node" id="stepNode3">
+        <div class="step-circle">3</div>
+        <span class="step-lbl">Targets</span>
+      </div>
+    </div>
 
-    <script src="js/utils.js"></script>
-    <script src="js/storage.js"></script>
-    <script src="js/setup.js"></script>
+    <!-- Step 1: Subjects -->
+    <div class="step-block active" id="step1">
+      <div class="step-intro">
+        <div class="step-intro-icon icon-brand"><i class="fas fa-book"></i></div>
+        <h2>Add Your Subjects</h2>
+        <p>Enter all subjects you want to track. You can add or remove them anytime.</p>
+      </div>
+
+      <div class="subject-input-row">
+        <input type="text" class="subject-input" id="subjectName" placeholder="Enter subject name (e.g., Mathematics)" autocomplete="off">
+        <button class="btn btn-primary" id="addSubjectBtn"><i class="fas fa-plus"></i> Add</button>
+      </div>
+
+      <div class="subjects-grid" id="subjectsGrid"></div>
+
+      <div class="step-footer">
+        <div></div>
+        <button class="btn btn-primary" data-next="2">
+          Next: Timetable <i class="fas fa-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Step 2: Timetable -->
+    <div class="step-block" id="step2">
+      <div class="step-intro">
+        <div class="step-intro-icon icon-emerald"><i class="fas fa-calendar-week"></i></div>
+        <h2>Build Your Timetable</h2>
+        <p>Tap/click a subject below, then tap the day to add it. Or drag and drop on desktop.</p>
+      </div>
+
+      <div class="timetable-grid" id="timetableGrid"></div>
+
+      <div class="drag-pool-label"><i class="fas fa-hand-pointer"></i> Tap subject, then tap a day to assign</div>
+      <div class="drag-pool" id="dragPool"></div>
+
+      <div class="step-footer">
+        <button class="btn btn-ghost" data-prev="1"><i class="fas fa-arrow-left"></i> Back</button>
+        <button class="btn btn-primary" data-next="3">Next: Targets <i class="fas fa-arrow-right"></i></button>
+      </div>
+    </div>
+
+    <!-- Step 3: Targets -->
+    <div class="step-block" id="step3">
+      <div class="step-intro">
+        <div class="step-intro-icon icon-amber"><i class="fas fa-bullseye"></i></div>
+        <h2>Set Attendance Targets</h2>
+        <p>Set the minimum attendance % required for each subject.</p>
+      </div>
+
+      <div id="targetsList"></div>
+
+      <div id="completionCard" class="completion-card hidden">
+        <div class="completion-icon"><i class="fas fa-check"></i></div>
+        <h2>You're all set! 🎉</h2>
+        <p>Your attendance tracker is configured and ready to use.</p>
+        <a href="index.html" class="btn btn-emerald btn-lg">
+          <i class="fas fa-rocket"></i> Go to Dashboard
+        </a>
+      </div>
+
+      <div class="step-footer" id="step3Footer">
+        <button class="btn btn-ghost" data-prev="2"><i class="fas fa-arrow-left"></i> Back</button>
+        <button class="btn btn-emerald" id="saveSetupBtn">
+          <i class="fas fa-check"></i> Save & Finish
+        </button>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Bottom Nav -->
+  <nav class="bottom-nav">
+    <a href="index.html" class="nav-item">
+      <i class="fas fa-home"></i><span>Today</span>
+    </a>
+    <a href="stats.html" class="nav-item">
+      <i class="fas fa-chart-bar"></i><span>Stats</span>
+    </a>
+    <a href="setup.html" class="nav-item active">
+      <i class="fas fa-sliders"></i><span>Setup</span>
+    </a>
+  </nav>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="js/utils.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/setup.js"></script>
 </body>
 </html>

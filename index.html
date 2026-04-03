@@ -1,210 +1,487 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Attendo • Dashboard</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/glass.css">
-    <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Attendo • Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/theme.css">
+  <style>
+
+    /* HERO STATS */
+    .hero-bar {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .hero-stat {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px 10px 12px;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-stat-icon {
+      width: 34px; height: 34px;
+      border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 8px;
+      font-size: 0.85rem;
+    }
+    .hero-stat:nth-child(1) .hero-stat-icon { background: rgba(79,70,229,0.1);  color: var(--brand); }
+    .hero-stat:nth-child(2) .hero-stat-icon { background: rgba(16,185,129,0.1); color: var(--emerald-d); }
+    .hero-stat:nth-child(3) .hero-stat-icon { background: rgba(244,63,94,0.1);  color: var(--rose); }
+    .hero-stat-value {
+      font-size: 1.85rem;
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 3px;
+      letter-spacing: -0.03em;
+    }
+    .hero-stat:nth-child(1) .hero-stat-value { color: var(--brand); }
+    .hero-stat:nth-child(2) .hero-stat-value { color: var(--emerald-d); }
+    .hero-stat:nth-child(3) .hero-stat-value { color: var(--rose); }
+    .hero-stat-label {
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: var(--slate);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+    }
+    .hero-stat::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 3px;
+    }
+    .hero-stat:nth-child(1)::after { background: var(--brand); }
+    .hero-stat:nth-child(2)::after { background: var(--emerald); }
+    .hero-stat:nth-child(3)::after { background: var(--rose); }
+
+    /* WELCOME */
+    .welcome-card {
+      text-align: center;
+      padding: 52px 28px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+    .welcome-icon {
+      width: 64px; height: 64px;
+      background: linear-gradient(135deg, var(--brand), var(--brand-l));
+      border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 18px;
+      font-size: 1.6rem; color: white;
+      box-shadow: 0 8px 20px rgba(79,70,229,0.3);
+    }
+    .welcome-card h2 { font-size: 1.45rem; font-weight: 800; color: var(--ink); margin-bottom: 8px; letter-spacing: -0.02em; }
+    .welcome-card p  { color: var(--slate); margin-bottom: 22px; font-size: 0.93rem; line-height: 1.55; }
+
+    /* SCHEDULE HEADER */
+    .schedule-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .schedule-left { display: flex; align-items: center; gap: 10px; }
+    .day-pill {
+      background: var(--brand);
+      color: white;
+      border-radius: 999px;
+      padding: 4px 13px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+    .schedule-count { font-size: 0.82rem; color: var(--slate); font-weight: 500; }
+    .mark-all-btn {
+      display: flex; align-items: center; gap: 5px;
+      background: var(--surface-2);
+      border: 1px solid var(--border-md);
+      border-radius: 999px;
+      padding: 5px 13px;
+      font-size: 0.77rem; font-weight: 600; color: var(--ink-light);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .mark-all-btn:hover { background: var(--brand); color: white; border-color: var(--brand); }
+
+    /* ═══════════════════════════════════════
+       CLASS CARD
+    ═══════════════════════════════════════ */
+    .class-card {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 18px;
+      /* left padding bigger to clear stripe */
+      padding: 16px 16px 13px 20px;
+      margin-bottom: 10px;
+      cursor: grab;
+      user-select: none;
+      -webkit-user-select: none;
+      position: relative;
+      overflow: hidden;
+      will-change: transform;
+      /* Only non-transform properties transition here */
+      transition: border-color 100ms ease, background 100ms ease, box-shadow 200ms ease;
+      box-shadow: 0 1px 3px rgba(15,23,42,0.07);
+    }
+    .class-card:active { cursor: grabbing; }
+
+    /* Left colour stripe */
+    .card-stripe {
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 5px;
+      border-radius: 18px 0 0 18px;
+      background: var(--card-color, var(--brand));
+    }
+
+    /* Swipe tint states */
+    .class-card.sw-right {
+      background: rgba(16,185,129,0.05);
+      border-color: rgba(16,185,129,0.4);
+    }
+    .class-card.sw-left {
+      background: rgba(244,63,94,0.05);
+      border-color: rgba(244,63,94,0.4);
+    }
+
+    /* Swipe action badges — appear as card is dragged */
+    .swipe-badge {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%) scale(0.75);
+      border-radius: 10px;
+      padding: 6px 13px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      display: flex; align-items: center; gap: 5px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 100ms ease, transform 100ms ease;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .swipe-badge-present {
+      left: 12px;
+      background: var(--emerald);
+      color: white;
+      box-shadow: 0 3px 10px rgba(16,185,129,0.45);
+    }
+    .swipe-badge-absent {
+      right: 12px;
+      background: var(--rose);
+      color: white;
+      box-shadow: 0 3px 10px rgba(244,63,94,0.45);
+    }
+    .class-card.sw-right .swipe-badge-present,
+    .class-card.sw-left  .swipe-badge-absent {
+      opacity: 1;
+      transform: translateY(-50%) scale(1);
+    }
+
+    /* Card body — ring on the right */
+    .card-body {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .card-info { flex: 1; min-width: 0; }
+
+    .subject-title {
+      font-size: 0.97rem;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 5px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+
+    .risk-tag {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 0.66rem; font-weight: 700;
+      letter-spacing: 0.04em; text-transform: uppercase;
+    }
+    .risk-tag.on-track  { background: rgba(16,185,129,0.1);  color: var(--emerald-d); }
+    .risk-tag.watch-out { background: rgba(245,158,11,0.12); color: var(--amber-d); }
+    .risk-tag.at-risk   { background: rgba(244,63,94,0.10);  color: var(--rose); }
+
+    /* ── Ring — fixed so 100% never overflows ── */
+    .ring-wrap {
+      flex-shrink: 0;
+      width: 64px; height: 64px;
+      position: relative;
+    }
+    /* SVG viewBox="0 0 64 64" → radius=25, so max stroke+dasharray fully fits */
+    .ring-svg {
+      width: 100%; height: 100%;
+      transform: rotate(-90deg);
+      display: block;
+      overflow: visible;
+    }
+    .ring-bg {
+      fill: none;
+      stroke: var(--surface-3);
+      stroke-width: 5.5;
+    }
+    .ring-fill {
+      fill: none;
+      stroke-width: 5.5;
+      stroke-linecap: round;
+      transition: stroke-dashoffset 0.75s cubic-bezier(0.16,1,0.3,1);
+    }
+    /* Centered label using flexbox — always visible, never overflows */
+    .ring-label {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      /* Font size calculated so "100%" (4 chars) fits in ~42px inner diam */
+      font-size: 0.67rem;
+      font-weight: 800;
+      color: var(--ink);
+      line-height: 1;
+      letter-spacing: -0.01em;
+    }
+
+    /* Progress bar */
+    .card-progress { margin-top: 11px; }
+    .progress-meta {
+      display: flex; justify-content: space-between;
+      font-size: 0.73rem; color: var(--slate);
+      margin-bottom: 5px; font-weight: 500;
+    }
+
+    /* Footer */
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 11px;
+      padding-top: 9px;
+      border-top: 1px solid var(--border);
+    }
+    .status-row {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 0.78rem; font-weight: 600; color: var(--slate);
+    }
+    .status-icon {
+      width: 20px; height: 20px;
+      border-radius: 5px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.62rem;
+    }
+    .status-icon.pending   { background: rgba(245,158,11,0.12); color: var(--amber-d); }
+    .status-icon.attended  { background: rgba(16,185,129,0.12); color: var(--emerald-d); }
+    .status-icon.missed    { background: rgba(244,63,94,0.10);  color: var(--rose); }
+    .status-icon.cancelled { background: var(--surface-2);      color: var(--mist); }
+
+    .swipe-hint {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 0.7rem; color: var(--mist); font-weight: 500;
+    }
+    .swipe-hint span { display: flex; align-items: center; gap: 3px; }
+
+    /* EMPTY DAY */
+    .empty-day {
+      text-align: center;
+      padding: 52px 28px;
+      background: var(--surface);
+      border: 1.5px dashed var(--border-md);
+      border-radius: 20px;
+    }
+    .empty-day-icon {
+      width: 56px; height: 56px; border-radius: 14px;
+      background: var(--surface-2);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 14px; font-size: 1.3rem; color: var(--mist);
+    }
+    .empty-day h3 { font-size: 1rem; font-weight: 700; color: var(--ink-light); margin-bottom: 5px; }
+    .empty-day p  { color: var(--mist); font-size: 0.85rem; margin-bottom: 18px; }
+
+    /* SWIPE GUIDE */
+    .swipe-guide {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 16px;
+      margin-top: 10px;
+    }
+    .swipe-guide-title {
+      font-size: 0.7rem; font-weight: 700; color: var(--slate);
+      text-transform: uppercase; letter-spacing: 0.07em;
+      margin-bottom: 10px;
+      display: flex; align-items: center; gap: 5px;
+    }
+    .guide-row { display: flex; gap: 7px; }
+    .guide-item {
+      flex: 1; display: flex; align-items: center; justify-content: center;
+      gap: 5px; padding: 7px 4px;
+      border-radius: 9px; font-size: 0.72rem; font-weight: 600;
+    }
+    .guide-item.right  { background: rgba(16,185,129,0.08); color: var(--emerald-d); }
+    .guide-item.left   { background: rgba(244,63,94,0.07);  color: var(--rose); }
+    .guide-item.tap    { background: var(--surface-2); color: var(--slate); }
+
+    @media (max-width: 400px) {
+      .hero-stat-value { font-size: 1.5rem; }
+      .guide-row { gap: 5px; }
+      .guide-item { font-size: 0.65rem; padding: 6px 3px; }
+    }
+  </style>
 </head>
 <body>
-    <!-- Decorative Elements -->
-    <div class="deco-circle deco-1"></div>
-    <div class="deco-circle deco-2"></div>
-    <div class="deco-square deco-3"></div>
-    
-    <div class="app-container">
-        <!-- Header -->
-        <header class="glass-header">
-            <div class="header-content">
-                <div class="header-left">
-                    <button class="menu-trigger" id="menuTrigger">
-                        <i class="fas fa-graduation-cap"></i>
-                    </button>
-                    <div class="app-brand">
-                        <h1>Attendo</h1>
-                        <span class="subtitle">Academic Tracker</span>
-                    </div>
-                </div>
-                <div class="header-right">
-                    <button class="icon-btn today-btn" id="todayBtn">
-                        <i class="fas fa-calendar-alt"></i>
-                    </button>
-                    <div class="date-display">
-                        <span id="currentDay">Monday</span>
-                        <span id="currentDate">Mar 15, 2024</span>
-                    </div>
-                </div>
-            </div>
-        </header>
 
-        <!-- Main Content -->
-        <main class="main-content">
-            <!-- Setup Prompt -->
-            <div class="setup-prompt glass-card" id="setupPrompt">
-                <div class="prompt-icon">
-                    <i class="fas fa-book-open"></i>
-                </div>
-                <h2>Welcome to Attendo</h2>
-                <p>Start by setting up your subjects and timetable</p>
-                <a href="setup.html" class="btn btn-gold">
-                    <i class="fas fa-rocket"></i> Begin Setup
-                </a>
-            </div>
-
-            <!-- Today's Stats -->
-            <div class="today-stats glass-card" id="todayStats">
-                <div class="stat-header">
-                    <h3><i class="fas fa-chart-line"></i> Today's Overview</h3>
-                    <span class="badge" id="dayBadge">Today</span>
-                </div>
-                <div class="stats-grid">
-                    <div class="stat-item">
-                        <div class="stat-value" id="todayClasses">0</div>
-                        <div class="stat-label">Classes</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value" id="attendedToday">0</div>
-                        <div class="stat-label">Attended</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-value" id="missedToday">0</div>
-                        <div class="stat-label">Missed</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Classes List -->
-            <div class="classes-section" id="classesSection">
-                <div class="section-header">
-                    <h3><i class="fas fa-calendar-day"></i> Today's Schedule</h3>
-                    <div class="actions">
-                        <button class="btn btn-sm btn-outline" id="markAllBtn">
-                            <i class="fas fa-check-double"></i> Mark All
-                        </button>
-                    </div>
-                </div>
-
-                <div class="classes-container" id="classesContainer">
-                    <!-- Classes will be injected here -->
-                </div>
-
-                <!-- Empty State -->
-                <div class="empty-state glass-card" id="emptyState">
-                    <div class="empty-icon">
-                        <i class="fas fa-calendar-plus"></i>
-                    </div>
-                    <h3>No classes today</h3>
-                    <p>Time for self-study or relaxation!</p>
-                    <a href="setup.html" class="btn btn-outline">
-                        <i class="fas fa-cog"></i> Edit Schedule
-                    </a>
-                </div>
-
-                <!-- Swipe Guide -->
-                <div class="swipe-guide glass-card">
-                    <div class="guide-header">
-                        <i class="fas fa-gesture"></i>
-                        <h4>Swipe Guide</h4>
-                    </div>
-                    <div class="guide-items">
-                        <div class="guide-item right">
-                            <div class="guide-icon">
-                                <i class="fas fa-check-circle"></i>
-                            </div>
-                            <span>Swipe Right → Attended</span>
-                        </div>
-                        <div class="guide-item left">
-                            <div class="guide-icon">
-                                <i class="fas fa-times-circle"></i>
-                            </div>
-                            <span>Swipe Left → Missed</span>
-                        </div>
-                        <div class="guide-item tap">
-                            <div class="guide-icon">
-                                <i class="fas fa-ban"></i>
-                            </div>
-                            <span>Tap → Cancelled</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </main>
-
-        <!-- Quick Actions -->
-        <div class="quick-actions">
-            <button class="action-btn undo" id="undoBtn" disabled>
-                <i class="fas fa-undo"></i>
-                <span>Undo</span>
-            </button>
-            <button class="action-btn stats" onclick="location.href='stats.html'">
-                <i class="fas fa-chart-bar"></i>
-                <span>Stats</span>
-            </button>
-            <button class="action-btn setup" onclick="location.href='setup.html'">
-                <i class="fas fa-cog"></i>
-                <span>Setup</span>
-            </button>
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="header-brand">
+        <button class="brand-logo" id="menuBtn" aria-label="Menu">
+          <i class="fas fa-graduation-cap"></i>
+        </button>
+        <div class="brand-text">
+          <h1>Attendo</h1>
+          <span>Academic Tracker</span>
         </div>
+      </div>
+      <div class="header-meta">
+        <div class="date-chip" id="dateChip">–</div>
+        <button class="btn-icon" id="refreshBtn" title="Refresh">
+          <i class="fas fa-rotate-right"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="page-wrap">
+
+    <!-- Setup prompt -->
+    <div class="welcome-card hidden animate-up" id="setupPrompt">
+      <div class="welcome-icon"><i class="fas fa-book-open"></i></div>
+      <h2>Welcome to Attendo</h2>
+      <p>Set up your subjects and weekly timetable to start tracking attendance.</p>
+      <a href="setup.html" class="btn btn-primary">
+        <i class="fas fa-rocket"></i> Begin Setup
+      </a>
     </div>
 
-    <!-- Menu -->
-    <div class="side-menu" id="sideMenu">
-        <div class="menu-header">
-            <div class="menu-brand">
-                <i class="fas fa-graduation-cap"></i>
-                <h2>Attendo</h2>
-            </div>
-            <button class="close-menu" id="closeMenu">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        <div class="menu-items">
-            <a href="index.html" class="menu-item active">
-                <i class="fas fa-home"></i>
-                <span>Dashboard</span>
-            </a>
-            <a href="stats.html" class="menu-item">
-                <i class="fas fa-chart-bar"></i>
-                <span>Statistics</span>
-            </a>
-            <a href="setup.html" class="menu-item">
-                <i class="fas fa-cog"></i>
-                <span>Setup</span>
-            </a>
-            <div class="menu-divider"></div>
-            <button class="menu-item" id="exportBtn">
-                <i class="fas fa-download"></i>
-                <span>Export Data</span>
-            </button>
-            <button class="menu-item" id="importBtn">
-                <i class="fas fa-upload"></i>
-                <span>Import Data</span>
-            </button>
-            <button class="menu-item" id="resetBtn">
-                <i class="fas fa-trash-alt"></i>
-                <span>Reset All</span>
-            </button>
-        </div>
-        <div class="menu-footer">
-            <div class="storage-info">
-                <div class="storage-bar">
-                    <div class="storage-fill" id="storageFill"></div>
-                </div>
-                <span id="storageText">Storage: 0%</span>
-            </div>
-        </div>
+    <!-- Hero stats -->
+    <div class="hero-bar hidden animate-up" id="heroStats">
+      <div class="hero-stat">
+        <div class="hero-stat-icon"><i class="fas fa-calendar-day"></i></div>
+        <div class="hero-stat-value" id="statTotal">0</div>
+        <div class="hero-stat-label">Today</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-icon"><i class="fas fa-circle-check"></i></div>
+        <div class="hero-stat-value" id="statAttended">0</div>
+        <div class="hero-stat-label">Present</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-icon"><i class="fas fa-circle-xmark"></i></div>
+        <div class="hero-stat-value" id="statMissed">0</div>
+        <div class="hero-stat-label">Absent</div>
+      </div>
     </div>
-    <div class="menu-overlay" id="menuOverlay"></div>
 
-    <!-- Toast -->
-    <div class="toast-container" id="toastContainer"></div>
+    <!-- Schedule -->
+    <div class="hidden" id="scheduleSection">
+      <div class="schedule-head">
+        <div class="schedule-left">
+          <div class="day-pill" id="dayPill">–</div>
+          <span class="schedule-count" id="scheduleCount"></span>
+        </div>
+        <button class="mark-all-btn" id="markAllBtn">
+          <i class="fas fa-check-double"></i> Mark All
+        </button>
+      </div>
 
-    <script src="js/utils.js"></script>
-    <script src="js/storage.js"></script>
-    <script src="js/dashboard.js"></script>
-    <script src="js/app.js"></script>
+      <div id="classesContainer"></div>
+
+      <div class="empty-day hidden animate-up" id="emptyDay">
+        <div class="empty-day-icon"><i class="fas fa-calendar-check"></i></div>
+        <h3>No classes today</h3>
+        <p>Enjoy your break — or edit your schedule.</p>
+        <a href="setup.html" class="btn btn-ghost btn-sm">
+          <i class="fas fa-sliders"></i> Edit Schedule
+        </a>
+      </div>
+
+      <div class="swipe-guide animate-up animate-up-d3" id="swipeGuide">
+        <div class="swipe-guide-title">
+          <i class="fas fa-hand-pointer"></i> How to mark attendance
+        </div>
+        <div class="guide-row">
+          <div class="guide-item right"><i class="fas fa-arrow-right"></i> Right = Present</div>
+          <div class="guide-item left"><i class="fas fa-arrow-left"></i> Left = Absent</div>
+          <div class="guide-item tap"><i class="fas fa-hand-pointer"></i> Tap = Cancel</div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <nav class="bottom-nav">
+    <button class="nav-item nav-undo" id="undoBtn" disabled>
+      <i class="fas fa-rotate-left"></i>
+      <span>Undo</span>
+    </button>
+    <a href="index.html" class="nav-item active">
+      <i class="fas fa-house"></i>
+      <span>Today</span>
+    </a>
+    <a href="stats.html" class="nav-item">
+      <i class="fas fa-chart-bar"></i>
+      <span>Stats</span>
+    </a>
+    <a href="setup.html" class="nav-item">
+      <i class="fas fa-sliders"></i>
+      <span>Setup</span>
+    </a>
+  </nav>
+
+  <div class="side-menu" id="sideMenu">
+    <div class="menu-top">
+      <div class="menu-logo">
+        <div class="menu-logo-icon"><i class="fas fa-graduation-cap"></i></div>
+        <h2>Attendo</h2>
+      </div>
+      <button class="menu-close" id="menuClose"><i class="fas fa-times"></i></button>
+      <div class="menu-storage">
+        <div class="menu-storage-label">Storage Used</div>
+        <div class="menu-storage-bar">
+          <div class="menu-storage-fill" id="storageFill" style="width:0%"></div>
+        </div>
+        <div class="menu-storage-text" id="storageText">–</div>
+      </div>
+    </div>
+    <nav class="menu-nav">
+      <a href="index.html" class="menu-link active"><i class="fas fa-house"></i> Dashboard</a>
+      <a href="stats.html" class="menu-link"><i class="fas fa-chart-bar"></i> Statistics</a>
+      <a href="setup.html" class="menu-link"><i class="fas fa-sliders"></i> Setup</a>
+      <div class="menu-divider"></div>
+      <button class="menu-link" id="menuExport"><i class="fas fa-download"></i> Export Data</button>
+      <button class="menu-link" id="menuImport"><i class="fas fa-upload"></i> Import Data</button>
+      <div class="menu-divider"></div>
+      <button class="menu-link danger" id="menuReset"><i class="fas fa-trash-alt"></i> Reset All Data</button>
+    </nav>
+  </div>
+  <div class="menu-overlay" id="menuOverlay"></div>
+
+  <div class="toast-container" id="toastContainer"></div>
+  <input type="file" id="importInput" accept=".json" style="display:none">
+
+  <script src="js/utils.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/dashboard.js"></script>
 </body>
 </html>
