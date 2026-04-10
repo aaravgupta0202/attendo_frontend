@@ -485,3 +485,26 @@ body::before {
   --t-base: 250ms;
   --ease:   cubic-bezier(0.16, 1, 0.3, 1);
 }
+
+/* ── Site credit ── */
+.site-credit {
+  text-align: center;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--mist);
+  letter-spacing: 0.04em;
+  padding: 10px 0 2px;
+}
+
+/* ── Side menu credit ── */
+.menu-credit {
+  padding: 12px 20px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.25);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: 0.02em;
+}
+.menu-credit i { font-size: 0.72rem; }

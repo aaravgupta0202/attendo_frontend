@@ -487,6 +487,8 @@
       .cal-cell { font-size: 0.72rem; border-radius: var(--r-sm); }
     }
   </style>
+  <!-- PWA layer — must be in <head> to capture beforeinstallprompt -->
+  <script src="js/pwa.js"></script>
 </head>
 <body>
 
@@ -620,6 +622,9 @@
     </div>
   </main>
 
+
+  <!-- Credit -->
+  <div class="site-credit">Made by Aarav</div>
   <!-- Bottom Nav -->
   <nav class="bottom-nav">
     <a href="index.html" class="nav-item">
@@ -639,6 +644,5 @@
   <script src="js/utils.js"></script>
   <script src="js/storage.js"></script>
   <script src="js/stats.js"></script>
-  <script src="js/pwa.js"></script>
 </body>
 </html>

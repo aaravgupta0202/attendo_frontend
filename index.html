@@ -359,6 +359,8 @@
       .guide-item { font-size: 0.64rem; padding: 6px 3px; }
     }
   </style>
+  <!-- PWA layer — must be in <head> to capture beforeinstallprompt -->
+  <script src="js/pwa.js"></script>
 </head>
 <body>
 
@@ -508,6 +510,11 @@
       <button class="menu-link install-link" id="menuInstall" onclick="attendoInstall()"><i class="fas fa-download"></i> Install App</button>
       <div class="menu-divider"></div>
       <button class="menu-link danger" id="menuReset"><i class="fas fa-trash-alt"></i> Reset All</button>
+    
+      <div class="menu-divider"></div>
+      <div class="menu-credit">
+        <i class="fas fa-code"></i> Made by Aarav
+      </div>
     </nav>
   </div>
   <div class="menu-overlay" id="menuOverlay"></div>
@@ -521,6 +528,5 @@
   <script src="js/utils.js"></script>
   <script src="js/storage.js"></script>
   <script src="js/dashboard.js"></script>
-  <script src="js/pwa.js"></script>
 </body>
 </html>

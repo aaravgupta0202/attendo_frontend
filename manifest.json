@@ -2,16 +2,13 @@
   "name": "Attendo – Attendance Tracker",
   "short_name": "Attendo",
   "description": "Swipe-based attendance tracker. Mark classes, check stats, never miss your target.",
-  "id": "/attendo/",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
-  "display_override": ["standalone", "minimal-ui"],
   "background_color": "#f8f9fb",
   "theme_color": "#4f46e5",
   "orientation": "portrait-primary",
   "lang": "en",
-  "dir": "ltr",
   "categories": ["education", "productivity"],
   "prefer_related_applications": false,
 
@@ -49,23 +46,6 @@
       "short_name": "Setup",
       "url": "./setup.html",
       "icons": [{ "src": "icons/icon-96.png", "sizes": "96x96", "type": "image/png" }]
-    }
-  ],
-
-  "screenshots": [
-    {
-      "src": "icons/screenshot-mobile.png",
-      "sizes": "390x844",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Attendo on mobile"
-    },
-    {
-      "src": "icons/screenshot-desktop.png",
-      "sizes": "1280x800",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "Attendo on desktop"
     }
   ]
 }
