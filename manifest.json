@@ -1,7 +1,8 @@
 {
   "name": "Attendo – Attendance Tracker",
   "short_name": "Attendo",
-  "description": "Swipe-based academic attendance tracker. Mark classes, view analytics, and stay on target.",
+  "description": "Swipe-based attendance tracker. Mark classes, check stats, never miss your target.",
+  "id": "/attendo/",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
@@ -11,109 +12,41 @@
   "orientation": "portrait-primary",
   "lang": "en",
   "dir": "ltr",
-  "id": "attendo-v2",
-  "categories": ["education", "productivity", "utilities"],
+  "categories": ["education", "productivity"],
+  "prefer_related_applications": false,
 
   "icons": [
-    {
-      "src": "icons/icon-72.png",
-      "sizes": "72x72",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icons/icon-96.png",
-      "sizes": "96x96",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icons/icon-128.png",
-      "sizes": "128x128",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icons/icon-144.png",
-      "sizes": "144x144",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icons/icon-152.png",
-      "sizes": "152x152",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icons/icon-167.png",
-      "sizes": "167x167",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icons/icon-180.png",
-      "sizes": "180x180",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icons/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icons/icon-192-maskable.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "maskable"
-    },
-    {
-      "src": "icons/icon-256.png",
-      "sizes": "256x256",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icons/icon-384.png",
-      "sizes": "384x384",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icons/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icons/icon-512-maskable.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
-    }
+    { "src": "icons/icon-72.png",           "sizes": "72x72",   "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-96.png",           "sizes": "96x96",   "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-128.png",          "sizes": "128x128", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-144.png",          "sizes": "144x144", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-152.png",          "sizes": "152x152", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-167.png",          "sizes": "167x167", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-180.png",          "sizes": "180x180", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-192.png",          "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-192-maskable.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "icons/icon-256.png",          "sizes": "256x256", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-384.png",          "sizes": "384x384", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png",          "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ],
 
   "shortcuts": [
     {
       "name": "Today's Classes",
       "short_name": "Today",
-      "description": "Open today's attendance dashboard",
       "url": "./index.html",
       "icons": [{ "src": "icons/icon-96.png", "sizes": "96x96", "type": "image/png" }]
     },
     {
       "name": "Statistics",
       "short_name": "Stats",
-      "description": "View attendance analytics",
       "url": "./stats.html",
       "icons": [{ "src": "icons/icon-96.png", "sizes": "96x96", "type": "image/png" }]
     },
     {
       "name": "Setup",
       "short_name": "Setup",
-      "description": "Configure subjects and timetable",
       "url": "./setup.html",
       "icons": [{ "src": "icons/icon-96.png", "sizes": "96x96", "type": "image/png" }]
     }
@@ -125,7 +58,7 @@
       "sizes": "390x844",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "Attendo Dashboard on mobile"
+      "label": "Attendo on mobile"
     },
     {
       "src": "icons/screenshot-desktop.png",
@@ -134,7 +67,5 @@
       "form_factor": "wide",
       "label": "Attendo on desktop"
     }
-  ],
-
-  "prefer_related_applications": false
+  ]
 }

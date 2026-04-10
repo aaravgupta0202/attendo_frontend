@@ -4,462 +4,437 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Attendo • Setup</title>
-  <!-- PWA Core -->
+
+  <!-- ═══ PWA ═══════════════════════════════════════════════ -->
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#4f46e5">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="application-name" content="Attendo">
-
-  <!-- iOS / Safari -->
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Attendo">
-  <link rel="apple-touch-icon" href="icons/icon-180.png">
+  <link rel="apple-touch-icon"              href="icons/icon-180.png">
   <link rel="apple-touch-icon" sizes="120x120" href="icons/icon-128.png">
   <link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152.png">
   <link rel="apple-touch-icon" sizes="167x167" href="icons/icon-167.png">
   <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-180.png">
-  <link rel="apple-touch-startup-image" media="(device-width:430px) and (device-height:932px) and (-webkit-device-pixel-ratio:3)" href="icons/splash-1290x2796.png">
-  <link rel="apple-touch-startup-image" media="(device-width:390px) and (device-height:844px) and (-webkit-device-pixel-ratio:3)" href="icons/splash-1170x2532.png">
-  <link rel="apple-touch-startup-image" media="(device-width:375px) and (device-height:667px) and (-webkit-device-pixel-ratio:2)" href="icons/splash-750x1334.png">
-  <link rel="apple-touch-startup-image" media="(device-width:1024px) and (device-height:1366px) and (-webkit-device-pixel-ratio:2)" href="icons/splash-2048x2732.png">
-
-  <!-- Favicons -->
-  <link rel="icon" type="image/png" sizes="32x32"   href="icons/icon-96.png">
-  <link rel="icon" type="image/png" sizes="96x96"   href="icons/icon-96.png">
   <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-
-  <!-- Windows -->
+  <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
   <meta name="msapplication-TileColor" content="#4f46e5">
   <meta name="msapplication-TileImage" content="icons/icon-144.png">
-  <meta name="msapplication-config" content="browserconfig.xml">
-
-  <!-- SEO -->
-  <meta name="description" content="Track academic attendance with swipe gestures. Never miss your target percentage again.">
+  <meta name="description" content="Set up your subjects and timetable for Attendo.">
+  <!-- ════════════════════════════════════════════════════════ -->
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="css/theme.css">
-  <style>
-    /* ─── SETUP SPECIFIC ─── */
 
-    /* Stepper */
+  <style>
+    /* ═══════════════════════════════════════════
+       STEPPER
+    ═══════════════════════════════════════════ */
     .stepper {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: center;
-      gap: 0;
-      margin-bottom: var(--space-8);
+      margin-bottom: 28px;
     }
     .step-node {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: var(--space-2);
+      gap: 6px;
+      position: relative;
     }
     .step-circle {
-      width: 42px; height: 42px;
+      width: 38px; height: 38px;
       border-radius: 50%;
       background: var(--surface-2);
       border: 2px solid var(--border-md);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: var(--font);
-      font-weight: 800;
-      font-size: 0.95rem;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 0.88rem;
       color: var(--slate);
-      transition: all var(--t-base) var(--ease);
+      transition: all 0.25s ease;
     }
     .step-node.active .step-circle {
       background: var(--brand);
       border-color: var(--brand);
       color: white;
-      box-shadow: 0 0 0 4px rgba(79,70,229,0.15);
-      transform: scale(1.05);
+      box-shadow: 0 0 0 4px rgba(79,70,229,0.14);
     }
     .step-node.done .step-circle {
       background: var(--emerald);
       border-color: var(--emerald);
       color: white;
     }
-    .step-lbl {
-      font-size: 0.7rem;
-      font-weight: 600;
+    .step-label {
+      font-size: 0.68rem; font-weight: 700;
       color: var(--mist);
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      white-space: nowrap;
     }
-    .step-node.active .step-lbl { color: var(--brand); }
-    .step-node.done .step-lbl  { color: var(--emerald-d); }
-    .step-line {
-      width: 60px; height: 2px;
+    .step-node.active .step-label { color: var(--brand); }
+    .step-node.done  .step-label  { color: var(--emerald-d); }
+    .step-connector {
+      flex: 1;
+      height: 2px;
       background: var(--border);
+      margin: 18px 6px 0;
+      max-width: 80px;
+      transition: background 0.25s ease;
+    }
+    .step-connector.done { background: var(--emerald); }
+
+    /* ═══════════════════════════════════════════
+       STEP PANELS
+    ═══════════════════════════════════════════ */
+    .step-panel {
+      display: none;
+    }
+    .step-panel.active {
+      display: block;
+      animation: fade-up 0.3s ease both;
+    }
+
+    /* Section heading inside a step */
+    .step-section-title {
+      font-size: 0.72rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.07em;
+      color: var(--slate);
+      margin-bottom: 12px;
+      display: flex; align-items: center; gap: 6px;
+    }
+
+    /* Step footer nav */
+    .step-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 20px;
+      margin-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ═══════════════════════════════════════════
+       STEP 1 — SUBJECTS
+    ═══════════════════════════════════════════ */
+    .add-subject-row {
+      display: flex;
+      gap: 10px;
       margin-bottom: 20px;
     }
-    .step-line.done { background: var(--emerald); }
-
-    /* Step card */
-    .step-block {
-      display: none;
-      animation: fade-up 0.35s var(--ease) both;
-    }
-    .step-block.active { display: block; }
-
-    .step-intro {
-      text-align: center;
-      padding: var(--space-6) var(--space-4);
-      margin-bottom: var(--space-6);
-    }
-    .step-intro-icon {
-      width: 64px; height: 64px;
-      border-radius: var(--r-xl);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto var(--space-4);
-      font-size: 1.6rem;
-      color: white;
-    }
-    .icon-brand   { background: linear-gradient(135deg, var(--brand), var(--brand-l)); }
-    .icon-emerald { background: linear-gradient(135deg, var(--emerald-d), var(--emerald-l)); }
-    .icon-amber   { background: linear-gradient(135deg, var(--amber-d), var(--amber)); }
-    .step-intro h2 {
-      font-family: var(--font);
-      font-size: 1.4rem;
-      font-weight: 800;
-      color: var(--ink);
-      letter-spacing: -0.03em;
-      margin-bottom: var(--space-2);
-    }
-    .step-intro p { color: var(--slate); font-size: 0.9rem; }
-
-    /* Subject input */
-    .subject-input-row {
-      display: flex;
-      gap: var(--space-3);
-      margin-bottom: var(--space-5);
-    }
-    .subject-input {
+    .add-subject-input {
       flex: 1;
-      padding: var(--space-3) var(--space-4);
-      border: 1px solid var(--border-md);
-      border-radius: var(--r-md);
+      padding: 10px 14px;
+      border: 1.5px solid var(--border-md);
+      border-radius: 10px;
       font-family: var(--font);
       font-size: 0.95rem;
-      background: var(--surface);
       color: var(--ink);
-      transition: all var(--t-fast);
+      background: var(--surface);
+      transition: border-color 0.15s, box-shadow 0.15s;
     }
-    .subject-input:focus {
+    .add-subject-input:focus {
       outline: none;
       border-color: var(--brand);
       box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
     }
-    .subject-input::placeholder { color: var(--mist); }
+    .add-subject-input::placeholder { color: var(--mist); }
 
-    /* Subjects grid */
-    .subjects-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: var(--space-3);
-      margin-bottom: var(--space-4);
+    .subjects-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 4px;
     }
-
-    .subj-item {
+    .subject-row {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: var(--r-lg);
-      padding: var(--space-4);
+      border-radius: 12px;
+      padding: 12px 14px;
       display: flex;
       align-items: center;
-      gap: var(--space-3);
+      gap: 12px;
       box-shadow: var(--shadow-xs);
-      transition: all var(--t-base) var(--ease);
+      transition: box-shadow 0.2s ease;
     }
-    .subj-item:hover { box-shadow: var(--shadow-sm); transform: translateY(-1px); }
-
-    .subj-color {
-      width: 36px; height: 36px;
-      border-radius: var(--r-md);
+    .subject-row:hover { box-shadow: var(--shadow-sm); }
+    .subject-color-swatch {
+      width: 34px; height: 34px;
+      border-radius: 9px;
       flex-shrink: 0;
     }
-    .subj-item-info { flex: 1; min-width: 0; }
-    .subj-item-name { font-weight: 600; color: var(--ink); font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .subj-item-meta { font-size: 0.78rem; color: var(--slate); margin-top: 2px; }
-
-    .subj-item-actions { display: flex; gap: var(--space-2); flex-shrink: 0; }
-    .subj-action-btn {
+    .subject-row-info { flex: 1; min-width: 0; }
+    .subject-row-name {
+      font-weight: 700; font-size: 0.95rem; color: var(--ink);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .subject-row-meta { font-size: 0.76rem; color: var(--slate); margin-top: 1px; }
+    .subject-row-del {
       width: 30px; height: 30px;
-      border-radius: var(--r-sm);
-      border: none;
+      border-radius: 8px;
       background: var(--surface-2);
-      color: var(--slate);
-      font-size: 0.75rem;
+      border: none; color: var(--mist); font-size: 0.76rem;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; flex-shrink: 0;
+      transition: background 0.15s, color 0.15s;
+    }
+    .subject-row-del:hover { background: var(--rose); color: white; }
+
+    .empty-subjects-hint {
+      text-align: center;
+      padding: 36px 20px;
+      color: var(--mist);
+      font-size: 0.88rem;
+    }
+    .empty-subjects-hint i {
+      font-size: 1.8rem; color: var(--cloud);
+      display: block; margin-bottom: 10px;
+    }
+
+    /* ═══════════════════════════════════════════
+       STEP 2 — TIMETABLE
+    ═══════════════════════════════════════════ */
+
+    /* Instruction bar */
+    .tt-instruction {
       display: flex;
       align-items: center;
-      justify-content: center;
+      gap: 10px;
+      background: rgba(79,70,229,0.06);
+      border: 1px solid rgba(79,70,229,0.14);
+      border-radius: 10px;
+      padding: 10px 14px;
+      margin-bottom: 18px;
+      font-size: 0.82rem;
+      color: var(--brand);
+      font-weight: 600;
+    }
+    .tt-instruction i { font-size: 0.9rem; flex-shrink: 0; }
+
+    /* Subject pills (the pool you pick from) */
+    .subject-pool {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    .pool-pill {
+      display: flex; align-items: center; gap: 7px;
+      padding: 7px 13px;
+      background: var(--surface);
+      border: 1.5px solid var(--border-md);
+      border-radius: 99px;
+      font-size: 0.85rem; font-weight: 600;
+      color: var(--ink-light);
       cursor: pointer;
-      transition: all var(--t-fast);
+      user-select: none;
+      transition: all 0.15s ease;
+      box-shadow: var(--shadow-xs);
     }
-    .subj-action-btn:hover { background: var(--rose); color: white; }
-    .subj-action-btn.edit:hover { background: var(--brand); color: white; }
-
-    .empty-subjects {
-      grid-column: 1/-1;
-      text-align: center;
-      padding: var(--space-10);
-      color: var(--mist);
-      font-size: 0.9rem;
+    .pool-pill:hover { border-color: var(--brand); color: var(--brand); }
+    .pool-pill.selected {
+      background: rgba(79,70,229,0.08);
+      border-color: var(--brand);
+      color: var(--brand);
+      box-shadow: 0 0 0 3px rgba(79,70,229,0.12);
     }
-    .empty-subjects i { font-size: 2rem; display: block; margin-bottom: var(--space-3); color: var(--cloud); }
+    .pool-pill[draggable="true"] { cursor: grab; }
+    .pool-pill.dragging { opacity: 0.4; }
+    .pool-dot {
+      width: 9px; height: 9px;
+      border-radius: 50%; flex-shrink: 0;
+    }
 
-    /* Timetable */
-    .timetable-grid {
+    /* 7-column day grid */
+    .day-grid {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
-      gap: var(--space-2);
-      margin-bottom: var(--space-6);
+      gap: 8px;
+      margin-bottom: 4px;
     }
     .day-col {
       background: var(--surface);
       border: 1.5px dashed var(--border-md);
-      border-radius: var(--r-lg);
-      padding: var(--space-3) var(--space-2);
-      min-height: 110px;
-      transition: all var(--t-fast);
+      border-radius: 12px;
+      padding: 8px 6px;
+      min-height: 120px;
+      display: flex;
+      flex-direction: column;
+      transition: border-color 0.15s, background 0.15s;
     }
     .day-col.drag-over {
-      border-color: var(--brand);
       border-style: solid;
+      border-color: var(--brand);
       background: rgba(79,70,229,0.04);
+    }
+    .day-col.tap-target {
+      border-style: solid;
+      border-color: var(--brand);
+      background: rgba(79,70,229,0.04);
+      animation: pulse-border 0.8s ease infinite alternate;
+    }
+    @keyframes pulse-border {
+      from { border-color: rgba(79,70,229,0.4); }
+      to   { border-color: var(--brand); }
     }
     .day-col-head {
       text-align: center;
-      font-size: 0.68rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
+      font-size: 0.65rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.08em;
       color: var(--slate);
-      padding-bottom: var(--space-2);
-      margin-bottom: var(--space-2);
+      padding-bottom: 6px; margin-bottom: 6px;
       border-bottom: 1px solid var(--border);
     }
-    .day-col-subjects {
+    .day-subjects {
       display: flex;
       flex-direction: column;
-      gap: var(--space-1);
-      min-height: 60px;
+      gap: 4px;
+      flex: 1;
     }
-    .day-subject-chip {
-      border-radius: var(--r-sm);
-      padding: 4px 3px;
-      font-size: 0.6rem;
-      font-weight: 600;
+    .day-chip {
+      border-radius: 5px;
+      padding: 3px 4px;
+      font-size: 0.58rem; font-weight: 700;
       text-align: center;
       color: white;
-      cursor: move;
-      position: relative;
       line-height: 1.3;
       word-break: break-word;
-      transition: all var(--t-fast);
+      position: relative;
+      cursor: default;
+      transition: filter 0.15s;
     }
-    .day-subject-chip:hover { filter: brightness(1.1); }
-    .chip-remove {
+    .day-chip:hover { filter: brightness(1.1); }
+    .chip-del {
       position: absolute;
-      top: -5px; right: -5px;
-      width: 16px; height: 16px;
+      top: -4px; right: -4px;
+      width: 14px; height: 14px;
       border-radius: 50%;
-      background: var(--rose);
-      color: white;
-      border: none;
-      font-size: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      opacity: 0;
-      transition: opacity var(--t-fast);
+      background: rgba(0,0,0,0.35);
+      border: none; color: white;
+      font-size: 7px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; line-height: 1;
+      opacity: 0; transition: opacity 0.15s;
     }
-    .day-subject-chip:hover .chip-remove { opacity: 1; }
+    .day-chip:hover .chip-del { opacity: 1; }
+    @media (hover: none) { .chip-del { opacity: 1; } }
 
-    /* On mobile, always show remove button */
-    @media (hover: none) {
-      .chip-remove { opacity: 1; }
-    }
-
-    .empty-col-hint {
-      font-size: 0.6rem;
-      color: var(--cloud);
+    .day-col-empty {
+      flex: 1;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.58rem; color: var(--cloud);
       text-align: center;
-      padding-top: var(--space-2);
     }
 
-    /* Drag items */
-    .drag-pool-label {
-      font-size: 0.78rem;
-      font-weight: 700;
-      color: var(--slate);
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
-      margin-bottom: var(--space-3);
-    }
-    .drag-pool {
+    /* ═══════════════════════════════════════════
+       STEP 3 — TARGETS
+    ═══════════════════════════════════════════ */
+    .targets-list {
       display: flex;
-      flex-wrap: wrap;
-      gap: var(--space-2);
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 4px;
     }
-    .drag-pill {
-      display: flex;
-      align-items: center;
-      gap: var(--space-2);
-      padding: var(--space-2) var(--space-3);
-      background: var(--surface);
-      border: 1px solid var(--border-md);
-      border-radius: var(--r-full);
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--ink-light);
-      cursor: grab;
-      user-select: none;
-      transition: all var(--t-fast);
-      box-shadow: var(--shadow-xs);
-    }
-    .drag-pill:hover { border-color: var(--brand); color: var(--brand); }
-    .drag-pill.dragging { opacity: 0.4; }
-    .drag-pill-dot {
-      width: 10px; height: 10px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-
-    /* Targets */
-    .target-row {
+    .target-card {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: var(--r-lg);
-      padding: var(--space-5);
-      margin-bottom: var(--space-3);
+      border-radius: 14px;
+      padding: 16px 18px;
       box-shadow: var(--shadow-xs);
     }
-    .target-row-head {
+    .target-card-head {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: var(--space-4);
+      margin-bottom: 12px;
     }
-    .target-subj-name {
-      font-weight: 700;
-      color: var(--ink);
-      font-size: 0.95rem;
+    .target-card-name {
+      font-weight: 700; font-size: 0.95rem; color: var(--ink);
+      display: flex; align-items: center; gap: 8px;
     }
-    .target-val-display {
-      font-family: var(--font);
-      font-size: 1.3rem;
-      font-weight: 800;
-      color: var(--brand);
+    .target-card-name-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%; flex-shrink: 0;
+    }
+    .target-pct {
+      font-size: 1.4rem; font-weight: 800;
+      color: var(--brand); letter-spacing: -0.03em;
+      min-width: 52px; text-align: right;
     }
     .target-slider {
       width: 100%;
-      -webkit-appearance: none;
-      appearance: none;
+      -webkit-appearance: none; appearance: none;
       height: 6px;
       background: var(--surface-3);
-      border-radius: var(--r-full);
-      outline: none;
-      cursor: pointer;
+      border-radius: 99px;
+      outline: none; cursor: pointer;
+      margin-bottom: 8px;
     }
     .target-slider::-webkit-slider-thumb {
       -webkit-appearance: none;
-      width: 22px; height: 22px;
-      border-radius: 50%;
-      background: var(--brand);
-      cursor: pointer;
-      border: 3px solid white;
-      box-shadow: 0 2px 8px rgba(79,70,229,0.35);
+      width: 20px; height: 20px; border-radius: 50%;
+      background: var(--brand); cursor: pointer;
+      border: 2.5px solid white;
+      box-shadow: 0 1px 6px rgba(79,70,229,0.35);
     }
     .target-slider::-moz-range-thumb {
-      width: 22px; height: 22px;
-      border-radius: 50%;
-      background: var(--brand);
-      cursor: pointer;
-      border: 3px solid white;
-      box-shadow: 0 2px 8px rgba(79,70,229,0.35);
+      width: 20px; height: 20px; border-radius: 50%;
+      background: var(--brand); cursor: pointer;
+      border: 2.5px solid white;
+      box-shadow: 0 1px 6px rgba(79,70,229,0.35);
     }
     .target-hint {
-      font-size: 0.75rem;
-      color: var(--mist);
-      margin-top: var(--space-2);
+      font-size: 0.76rem; color: var(--slate);
+      display: flex; align-items: center; gap: 5px;
     }
+    .target-hint i { font-size: 0.72rem; }
+    .hint-high   { color: var(--emerald-d); }
+    .hint-mid    { color: var(--brand); }
+    .hint-low    { color: var(--amber-d); }
 
-    /* Step footer */
-    .step-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding-top: var(--space-5);
-      border-top: 1px solid var(--border);
-      margin-top: var(--space-6);
-    }
-
-    /* Completion card */
-    .completion-card {
+    /* ═══════════════════════════════════════════
+       COMPLETION CARD
+    ═══════════════════════════════════════════ */
+    .done-card {
       text-align: center;
-      padding: var(--space-10) var(--space-6);
+      padding: 48px 24px;
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: var(--r-xl);
+      border-radius: 20px;
       box-shadow: var(--shadow-sm);
+      animation: fade-up 0.4s ease both;
     }
-    .completion-icon {
-      width: 80px; height: 80px;
-      border-radius: var(--r-xl);
+    .done-icon {
+      width: 72px; height: 72px; border-radius: 20px;
       background: linear-gradient(135deg, var(--emerald-d), var(--emerald-l));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto var(--space-5);
-      font-size: 2rem;
-      color: white;
-      box-shadow: 0 8px 24px rgba(16,185,129,0.35);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px; font-size: 1.9rem; color: white;
+      box-shadow: 0 8px 24px rgba(16,185,129,0.3);
     }
-    .completion-card h2 {
-      font-family: var(--font);
-      font-size: 1.8rem;
-      font-weight: 800;
-      letter-spacing: -0.04em;
-      color: var(--ink);
-      margin-bottom: var(--space-2);
+    .done-card h2 {
+      font-size: 1.6rem; font-weight: 800;
+      letter-spacing: -0.04em; color: var(--ink);
+      margin-bottom: 8px;
     }
-    .completion-card p { color: var(--slate); margin-bottom: var(--space-6); }
+    .done-card p { color: var(--slate); margin-bottom: 24px; font-size: 0.92rem; }
 
-    /* Page title */
-    .page-title-area {
-      margin-bottom: var(--space-6);
-    }
-    .page-title-area h1 {
-      font-family: var(--font);
-      font-size: 1.6rem;
-      font-weight: 800;
-      letter-spacing: -0.04em;
-      color: var(--ink);
-      margin-bottom: 4px;
-    }
-    .page-title-area p { color: var(--slate); font-size: 0.9rem; }
-
+    /* ═══════════════════════════════════════════
+       RESPONSIVE
+    ═══════════════════════════════════════════ */
     @media (max-width: 600px) {
-      .subject-input-row { flex-direction: column; }
-      .subjects-grid { grid-template-columns: 1fr; }
-      .stepper { gap: 0; }
-      .step-line { width: 36px; }
-      .step-circle { width: 36px; height: 36px; font-size: 0.85rem; }
-      .timetable-grid { gap: var(--space-1); }
-      .day-col { padding: var(--space-2) var(--space-1); min-height: 80px; }
-      .day-col-head { font-size: 0.55rem; }
-      .day-subject-chip { font-size: 0.52rem; }
-      .drag-pool { flex-wrap: nowrap; overflow-x: auto; padding-bottom: var(--space-2); }
-      .drag-pill { flex-shrink: 0; }
-      .step-footer { flex-direction: column; gap: var(--space-3); }
-      .step-footer .btn { width: 100%; justify-content: center; }
+      .add-subject-row { flex-direction: row; }
+      .day-grid { gap: 4px; }
+      .day-col  { padding: 6px 3px; min-height: 90px; border-radius: 9px; }
+      .day-col-head { font-size: 0.6rem; padding-bottom: 4px; margin-bottom: 4px; }
+      .day-chip { font-size: 0.52rem; padding: 2px 2px; border-radius: 4px; }
+      .chip-del { width: 12px; height: 12px; font-size: 6px; }
+      .pool-pill { font-size: 0.8rem; padding: 6px 11px; }
+      .step-nav { flex-direction: column-reverse; gap: 10px; }
+      .step-nav .btn { width: 100%; justify-content: center; }
+      .step-connector { max-width: 40px; }
+    }
+    @media (max-width: 380px) {
+      .step-label { display: none; }
     }
   </style>
 </head>
@@ -469,108 +444,120 @@
   <header class="app-header">
     <div class="header-inner">
       <div class="header-brand">
-        <a href="index.html" class="brand-logo" style="text-decoration:none">
+        <a href="index.html" class="brand-logo" style="text-decoration:none" aria-label="Back">
           <i class="fas fa-arrow-left"></i>
         </a>
         <div class="brand-text">
           <h1>Attendo</h1>
-          <span>Setup Wizard</span>
+          <span>Setup</span>
         </div>
       </div>
     </div>
   </header>
 
-  <!-- Main -->
   <main class="page-wrap">
 
-    <div class="page-title-area animate-up">
-      <h1>Configure Your Tracker</h1>
-      <p>Set up subjects, timetable, and attendance targets.</p>
-    </div>
-
     <!-- Stepper -->
-    <div class="stepper animate-up animate-up-d1">
-      <div class="step-node active" id="stepNode1">
-        <div class="step-circle">1</div>
-        <span class="step-lbl">Subjects</span>
+    <div class="stepper animate-up">
+      <div class="step-node active" id="sn1">
+        <div class="step-circle" id="sc1">1</div>
+        <span class="step-label">Subjects</span>
       </div>
-      <div class="step-line" id="stepLine1"></div>
-      <div class="step-node" id="stepNode2">
-        <div class="step-circle">2</div>
-        <span class="step-lbl">Timetable</span>
+      <div class="step-connector" id="sc-line1"></div>
+      <div class="step-node" id="sn2">
+        <div class="step-circle" id="sc2">2</div>
+        <span class="step-label">Timetable</span>
       </div>
-      <div class="step-line" id="stepLine2"></div>
-      <div class="step-node" id="stepNode3">
-        <div class="step-circle">3</div>
-        <span class="step-lbl">Targets</span>
+      <div class="step-connector" id="sc-line2"></div>
+      <div class="step-node" id="sn3">
+        <div class="step-circle" id="sc3">3</div>
+        <span class="step-label">Targets</span>
       </div>
     </div>
 
-    <!-- Step 1: Subjects -->
-    <div class="step-block active" id="step1">
-      <div class="step-intro">
-        <div class="step-intro-icon icon-brand"><i class="fas fa-book"></i></div>
-        <h2>Add Your Subjects</h2>
-        <p>Enter all subjects you want to track. You can add or remove them anytime.</p>
+    <!-- ── Step 1: Subjects ── -->
+    <div class="step-panel active animate-up d1" id="step1">
+
+      <div class="step-section-title">
+        <i class="fas fa-book"></i> Your Subjects
       </div>
 
-      <div class="subject-input-row">
-        <input type="text" class="subject-input" id="subjectName" placeholder="Enter subject name (e.g., Mathematics)" autocomplete="off">
-        <button class="btn btn-primary" id="addSubjectBtn"><i class="fas fa-plus"></i> Add</button>
+      <div class="add-subject-row">
+        <input
+          type="text"
+          class="add-subject-input"
+          id="subjectInput"
+          placeholder="Subject name (e.g. Mathematics)"
+          autocomplete="off"
+          maxlength="50"
+        >
+        <button class="btn btn-primary" id="addSubjectBtn">
+          <i class="fas fa-plus"></i> Add
+        </button>
       </div>
 
-      <div class="subjects-grid" id="subjectsGrid"></div>
+      <div class="subjects-list" id="subjectsList"></div>
 
-      <div class="step-footer">
+      <div class="step-nav">
         <div></div>
-        <button class="btn btn-primary" data-next="2">
+        <button class="btn btn-primary" id="toStep2">
           Next: Timetable <i class="fas fa-arrow-right"></i>
         </button>
       </div>
     </div>
 
-    <!-- Step 2: Timetable -->
-    <div class="step-block" id="step2">
-      <div class="step-intro">
-        <div class="step-intro-icon icon-emerald"><i class="fas fa-calendar-week"></i></div>
-        <h2>Build Your Timetable</h2>
-        <p>Tap/click a subject below, then tap the day to add it. Or drag and drop on desktop.</p>
+    <!-- ── Step 2: Timetable ── -->
+    <div class="step-panel" id="step2">
+
+      <div class="tt-instruction">
+        <i class="fas fa-circle-info"></i>
+        <span>Select a subject below, then click a day to assign it. Drag &amp; drop also works on desktop.</span>
       </div>
 
-      <div class="timetable-grid" id="timetableGrid"></div>
+      <div class="step-section-title" style="margin-bottom:10px">
+        <i class="fas fa-hand-pointer"></i> Subjects
+      </div>
+      <div class="subject-pool" id="subjectPool"></div>
 
-      <div class="drag-pool-label"><i class="fas fa-hand-pointer"></i> Tap subject, then tap a day to assign</div>
-      <div class="drag-pool" id="dragPool"></div>
+      <div class="step-section-title">
+        <i class="fas fa-calendar-week"></i> Weekly Schedule
+      </div>
+      <div class="day-grid" id="dayGrid"></div>
 
-      <div class="step-footer">
-        <button class="btn btn-ghost" data-prev="1"><i class="fas fa-arrow-left"></i> Back</button>
-        <button class="btn btn-primary" data-next="3">Next: Targets <i class="fas fa-arrow-right"></i></button>
+      <div class="step-nav">
+        <button class="btn btn-ghost" id="toStep1Back">
+          <i class="fas fa-arrow-left"></i> Back
+        </button>
+        <button class="btn btn-primary" id="toStep3">
+          Next: Targets <i class="fas fa-arrow-right"></i>
+        </button>
       </div>
     </div>
 
-    <!-- Step 3: Targets -->
-    <div class="step-block" id="step3">
-      <div class="step-intro">
-        <div class="step-intro-icon icon-amber"><i class="fas fa-bullseye"></i></div>
-        <h2>Set Attendance Targets</h2>
-        <p>Set the minimum attendance % required for each subject.</p>
+    <!-- ── Step 3: Targets ── -->
+    <div class="step-panel" id="step3">
+
+      <div class="step-section-title">
+        <i class="fas fa-bullseye"></i> Attendance Targets
       </div>
 
-      <div id="targetsList"></div>
+      <div class="targets-list" id="targetsList"></div>
 
-      <div id="completionCard" class="completion-card hidden">
-        <div class="completion-icon"><i class="fas fa-check"></i></div>
-        <h2>You're all set! 🎉</h2>
-        <p>Your attendance tracker is configured and ready to use.</p>
-        <a href="index.html" class="btn btn-emerald btn-lg">
-          <i class="fas fa-rocket"></i> Go to Dashboard
+      <div id="doneCard" class="done-card hidden">
+        <div class="done-icon"><i class="fas fa-check"></i></div>
+        <h2>All set!</h2>
+        <p>Your tracker is configured and ready. Start marking attendance on the dashboard.</p>
+        <a href="index.html" class="btn btn-emerald">
+          <i class="fas fa-house"></i> Go to Dashboard
         </a>
       </div>
 
-      <div class="step-footer" id="step3Footer">
-        <button class="btn btn-ghost" data-prev="2"><i class="fas fa-arrow-left"></i> Back</button>
-        <button class="btn btn-emerald" id="saveSetupBtn">
-          <i class="fas fa-check"></i> Save & Finish
+      <div class="step-nav" id="step3Nav">
+        <button class="btn btn-ghost" id="toStep2Back">
+          <i class="fas fa-arrow-left"></i> Back
+        </button>
+        <button class="btn btn-emerald" id="saveBtn">
+          <i class="fas fa-check"></i> Save &amp; Finish
         </button>
       </div>
     </div>
@@ -580,10 +567,10 @@
   <!-- Bottom Nav -->
   <nav class="bottom-nav">
     <a href="index.html" class="nav-item">
-      <i class="fas fa-home"></i><span>Today</span>
+      <i class="fas fa-house"></i><span>Today</span>
     </a>
     <a href="stats.html" class="nav-item">
-      <i class="fas fa-chart-bar"></i><span>Stats</span>
+      <i class="fas fa-chart-column"></i><span>Stats</span>
     </a>
     <a href="setup.html" class="nav-item active">
       <i class="fas fa-sliders"></i><span>Setup</span>

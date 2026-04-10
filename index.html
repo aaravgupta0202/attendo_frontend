@@ -5,46 +5,52 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Attendo • Dashboard</title>
 
-  <!-- PWA Core -->
+  <!-- ═══ PWA ═══════════════════════════════════════════════ -->
+  <!-- Manifest + theme -->
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#4f46e5">
+
+  <!-- Android / Chrome -->
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="application-name" content="Attendo">
 
   <!-- iOS / Safari -->
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Attendo">
-  <!-- Apple touch icons — all sizes for every device -->
-  <link rel="apple-touch-icon" href="icons/icon-180.png">
+
+  <!-- Apple touch icons  (put ALL of these in icons/) -->
+  <link rel="apple-touch-icon"              href="icons/icon-180.png">
   <link rel="apple-touch-icon" sizes="120x120" href="icons/icon-128.png">
   <link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152.png">
   <link rel="apple-touch-icon" sizes="167x167" href="icons/icon-167.png">
   <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-180.png">
-  <!-- iOS splash screens (portrait, common devices) -->
-  <link rel="apple-touch-startup-image" media="(device-width:430px) and (device-height:932px) and (-webkit-device-pixel-ratio:3)" href="icons/splash-1290x2796.png">
-  <link rel="apple-touch-startup-image" media="(device-width:393px) and (device-height:852px) and (-webkit-device-pixel-ratio:3)" href="icons/splash-1179x2556.png">
-  <link rel="apple-touch-startup-image" media="(device-width:390px) and (device-height:844px) and (-webkit-device-pixel-ratio:3)" href="icons/splash-1170x2532.png">
-  <link rel="apple-touch-startup-image" media="(device-width:375px) and (device-height:812px) and (-webkit-device-pixel-ratio:3)" href="icons/splash-1125x2436.png">
-  <link rel="apple-touch-startup-image" media="(device-width:414px) and (device-height:896px) and (-webkit-device-pixel-ratio:2)" href="icons/splash-828x1792.png">
-  <link rel="apple-touch-startup-image" media="(device-width:375px) and (device-height:667px) and (-webkit-device-pixel-ratio:2)" href="icons/splash-750x1334.png">
-  <link rel="apple-touch-startup-image" media="(device-width:1024px) and (device-height:1366px) and (-webkit-device-pixel-ratio:2)" href="icons/splash-2048x2732.png">
-  <link rel="apple-touch-startup-image" media="(device-width:834px) and (device-height:1194px) and (-webkit-device-pixel-ratio:2)" href="icons/splash-1668x2388.png">
-  <link rel="apple-touch-startup-image" media="(device-width:820px) and (device-height:1180px) and (-webkit-device-pixel-ratio:2)" href="icons/splash-1640x2360.png">
-  <link rel="apple-touch-startup-image" media="(device-width:768px) and (device-height:1024px) and (-webkit-device-pixel-ratio:2)" href="icons/splash-1536x2048.png">
 
-  <!-- Favicons -->
+  <!-- iOS splash screens (put these in icons/ too — optional but nice) -->
+  <link rel="apple-touch-startup-image" media="(device-width:430px)and(device-height:932px)and(-webkit-device-pixel-ratio:3)"   href="icons/splash-1290x2796.png">
+  <link rel="apple-touch-startup-image" media="(device-width:393px)and(device-height:852px)and(-webkit-device-pixel-ratio:3)"   href="icons/splash-1179x2556.png">
+  <link rel="apple-touch-startup-image" media="(device-width:390px)and(device-height:844px)and(-webkit-device-pixel-ratio:3)"   href="icons/splash-1170x2532.png">
+  <link rel="apple-touch-startup-image" media="(device-width:375px)and(device-height:812px)and(-webkit-device-pixel-ratio:3)"   href="icons/splash-1125x2436.png">
+  <link rel="apple-touch-startup-image" media="(device-width:414px)and(device-height:896px)and(-webkit-device-pixel-ratio:2)"   href="icons/splash-828x1792.png">
+  <link rel="apple-touch-startup-image" media="(device-width:375px)and(device-height:667px)and(-webkit-device-pixel-ratio:2)"   href="icons/splash-750x1334.png">
+  <link rel="apple-touch-startup-image" media="(device-width:1024px)and(device-height:1366px)and(-webkit-device-pixel-ratio:2)" href="icons/splash-2048x2732.png">
+  <link rel="apple-touch-startup-image" media="(device-width:820px)and(device-height:1180px)and(-webkit-device-pixel-ratio:2)"  href="icons/splash-1640x2360.png">
+
+  <!-- Favicons (browsers + desktop) -->
   <link rel="icon" type="image/png" sizes="32x32"   href="icons/icon-96.png">
   <link rel="icon" type="image/png" sizes="96x96"   href="icons/icon-96.png">
   <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
 
-  <!-- Windows -->
+  <!-- Windows tiles -->
   <meta name="msapplication-TileColor" content="#4f46e5">
   <meta name="msapplication-TileImage" content="icons/icon-144.png">
-  <meta name="msapplication-config" content="browserconfig.xml">
+  <meta name="msapplication-config"    content="none">
 
   <!-- SEO -->
-  <meta name="description" content="Track academic attendance with swipe gestures. Never miss your target percentage again.">
+  <meta name="description" content="Swipe to mark attendance, track stats, and never miss your target percentage.">
+  <!-- ═══════════════════════════════════════════════════════ -->
+
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="css/theme.css">

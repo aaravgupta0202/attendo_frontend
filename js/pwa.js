@@ -1,214 +1,271 @@
-// ============================================================
-// pwa.js — Attendo PWA layer v2.2
-// Handles: SW registration, install prompt, update banner
-// ============================================================
+// ─────────────────────────────────────────────────────────────
+// pwa.js  ·  Attendo PWA layer
+// Responsibilities:
+//   1. Register the service worker
+//   2. Capture the install prompt and show a tasteful banner
+//   3. Detect when a new SW is waiting and offer a reload
+// ─────────────────────────────────────────────────────────────
 (function () {
+  'use strict';
 
-  // ── 1. Service Worker ────────────────────────────────────────
+  // ── 1. Service Worker registration ───────────────────────────
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./service-worker.js', { scope: './' })
+      navigator.serviceWorker
+        .register('./service-worker.js', { scope: './' })
         .then(reg => {
-          // New SW found while app is open → show update banner
+          // While the page is open, watch for a new SW being installed
           reg.addEventListener('updatefound', () => {
-            const sw = reg.installing;
-            if (!sw) return;
-            sw.addEventListener('statechange', () => {
-              if (sw.state === 'installed' && navigator.serviceWorker.controller) {
+            const incoming = reg.installing;
+            if (!incoming) return;
+            incoming.addEventListener('statechange', () => {
+              if (incoming.state === 'installed' && navigator.serviceWorker.controller) {
                 showUpdateBanner(reg);
               }
             });
           });
         })
-        .catch(err => console.warn('[PWA] SW failed:', err));
+        .catch(err => console.warn('[PWA] SW registration failed:', err));
 
+      // SW posts SW_UPDATED after it activates
       navigator.serviceWorker.addEventListener('message', e => {
         if (e.data && e.data.type === 'SW_UPDATED') showUpdateBanner(null);
+      });
+
+      // Reload the page when a new SW takes control
+      let reloading = false;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (!reloading) { reloading = true; window.location.reload(); }
       });
     });
   }
 
-  // ── 2. Install prompt ────────────────────────────────────────
+  // ── 2. Install prompt ─────────────────────────────────────────
   let deferredPrompt = null;
 
   window.addEventListener('beforeinstallprompt', e => {
-    e.preventDefault();
+    e.preventDefault();           // suppress the browser's own mini-bar
     deferredPrompt = e;
-    // Small delay so the page finishes loading first
-    setTimeout(showInstallBanner, 3500);
+    // Wait a few seconds after page load before nudging the user
+    setTimeout(maybeShowInstall, 4000);
   });
 
   window.addEventListener('appinstalled', () => {
     deferredPrompt = null;
-    hideBanner('pwa-install-banner');
+    hideBanner('pwa-install');
+    console.log('[PWA] App installed successfully');
   });
 
-  // ── 3. Show/hide helpers ─────────────────────────────────────
-  function showInstallBanner() {
-    if (isStandalone()) return;
-    if (sessionStorage.getItem('pwa-dismissed')) return;
-    if (document.getElementById('pwa-install-banner')) return;
+  function maybeShowInstall() {
+    if (isRunningStandalone()) return;            // already installed
+    if (sessionStorage.getItem('pwa-nodisplay')) return; // user said no this session
 
     const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream;
 
-    createBanner('pwa-install-banner',
-      isIOS
-        ? iosHTML()
-        : androidHTML()
-    );
-
-    const install = document.querySelector('#pwa-install-banner .pwa-install-btn');
-    if (install) {
-      install.addEventListener('click', async () => {
-        if (!deferredPrompt) return;
-        deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
-        deferredPrompt = null;
-        hideBanner('pwa-install-banner');
-      });
+    if (isIOS) {
+      // iOS can't use beforeinstallprompt — show a "how to install" tip instead
+      if (localStorage.getItem('pwa-ios-shown')) return; // shown before, don't repeat
+      showBanner('pwa-install', buildIOSHTML());
+      localStorage.setItem('pwa-ios-shown', '1');
+    } else if (deferredPrompt) {
+      showBanner('pwa-install', buildInstallHTML());
     }
-
-    document.querySelector('#pwa-install-banner .pwa-dismiss-btn')
-      .addEventListener('click', () => {
-        sessionStorage.setItem('pwa-dismissed', '1');
-        hideBanner('pwa-install-banner');
-      });
   }
 
+  // Called by the Install button inside the banner
+  window._pwaDoInstall = async function () {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    deferredPrompt = null;
+    hideBanner('pwa-install');
+    console.log('[PWA] Install outcome:', outcome);
+  };
+
+  // Called by any dismiss button
+  window._pwaDismiss = function (id) {
+    sessionStorage.setItem('pwa-nodisplay', '1');
+    hideBanner(id);
+  };
+
+  // ── 3. Update banner ──────────────────────────────────────────
   function showUpdateBanner(reg) {
-    if (document.getElementById('pwa-update-banner')) return;
-
-    createBanner('pwa-update-banner',
-      '<div class="pwa-icon"><i class="fas fa-rotate"></i></div>' +
-      '<div class="pwa-text"><strong>Update ready</strong>' +
-      '<span>Reload to get the latest version</span></div>' +
-      '<button class="pwa-reload-btn pwa-cta">Reload</button>' +
-      '<button class="pwa-dismiss-btn" aria-label="Dismiss"><i class="fas fa-times"></i></button>'
+    if (document.getElementById('pwa-update')) return;
+    showBanner('pwa-update',
+      '<div class="pwa-icon pwa-icon-update"><i class="fas fa-rotate"></i></div>' +
+      '<div class="pwa-copy">' +
+        '<strong>Update available</strong>' +
+        '<span>A new version of Attendo is ready</span>' +
+      '</div>' +
+      '<button class="pwa-cta" onclick="(function(){' +
+        'var r=window._pwaReg;' +
+        'if(r&&r.waiting)r.waiting.postMessage(\'SKIP_WAITING\');' +
+        'else location.reload();' +
+      '})()">Reload</button>' +
+      '<button class="pwa-close" onclick="document.getElementById(\'pwa-update\').remove()" aria-label="Dismiss">' +
+        '<i class="fas fa-times"></i>' +
+      '</button>'
     );
-
-    document.querySelector('#pwa-update-banner .pwa-reload-btn')
-      .addEventListener('click', () => {
-        if (reg && reg.waiting) reg.waiting.postMessage('SKIP_WAITING');
-        window.location.reload();
-      });
-
-    document.querySelector('#pwa-update-banner .pwa-dismiss-btn')
-      .addEventListener('click', () => hideBanner('pwa-update-banner'));
+    window._pwaReg = reg;
   }
 
-  function createBanner(id, html) {
-    injectStyles();
+  // ── Banner helpers ─────────────────────────────────────────────
+  function showBanner(id, html) {
+    if (document.getElementById(id)) return;
+    injectCSS();
     const el = document.createElement('div');
     el.id = id;
     el.className = 'pwa-banner';
     el.innerHTML = html;
     document.body.appendChild(el);
-    requestAnimationFrame(() =>
-      requestAnimationFrame(() => el.classList.add('pwa-banner-in'))
-    );
+    // Double rAF ensures transition fires
+    requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('pwa-in')));
   }
 
   function hideBanner(id) {
     const el = document.getElementById(id);
     if (!el) return;
-    el.classList.remove('pwa-banner-in');
-    setTimeout(() => el.remove(), 340);
+    el.classList.remove('pwa-in');
+    setTimeout(() => el.remove(), 360);
   }
 
-  function isStandalone() {
-    return window.matchMedia('(display-mode: standalone)').matches ||
-           window.navigator.standalone === true;
+  function isRunningStandalone() {
+    return window.matchMedia('(display-mode: standalone)').matches
+        || window.navigator.standalone === true;
   }
 
-  // ── HTML templates ───────────────────────────────────────────
-  function androidHTML() {
+  // ── HTML builders ──────────────────────────────────────────────
+  function buildInstallHTML() {
     return (
       '<div class="pwa-icon"><i class="fas fa-graduation-cap"></i></div>' +
-      '<div class="pwa-text"><strong>Install Attendo</strong>' +
-      '<span>Add to your home screen — works offline too</span></div>' +
-      '<button class="pwa-install-btn pwa-cta">Install</button>' +
-      '<button class="pwa-dismiss-btn" aria-label="Dismiss"><i class="fas fa-times"></i></button>'
+      '<div class="pwa-copy">' +
+        '<strong>Install Attendo</strong>' +
+        '<span>Works offline · Home screen icon · No app store needed</span>' +
+      '</div>' +
+      '<button class="pwa-cta" onclick="_pwaDoInstall()">Install</button>' +
+      '<button class="pwa-close" onclick="_pwaDismiss(\'pwa-install\')" aria-label="Dismiss">' +
+        '<i class="fas fa-times"></i>' +
+      '</button>'
     );
   }
 
-  function iosHTML() {
+  function buildIOSHTML() {
     return (
       '<div class="pwa-icon"><i class="fas fa-graduation-cap"></i></div>' +
-      '<div class="pwa-text"><strong>Add to Home Screen</strong>' +
-      '<span>Tap <i class="fas fa-arrow-up-from-bracket"></i> then "Add to Home Screen"</span></div>' +
-      '<button class="pwa-dismiss-btn" aria-label="Dismiss"><i class="fas fa-times"></i></button>'
+      '<div class="pwa-copy">' +
+        '<strong>Add to Home Screen</strong>' +
+        '<span>Tap <i class="fas fa-arrow-up-from-bracket"></i> then "Add to Home Screen"</span>' +
+      '</div>' +
+      '<button class="pwa-close" onclick="_pwaDismiss(\'pwa-install\')" aria-label="Dismiss">' +
+        '<i class="fas fa-times"></i>' +
+      '</button>'
     );
   }
 
-  // ── Styles (injected once) ───────────────────────────────────
-  function injectStyles() {
-    if (document.getElementById('pwa-styles')) return;
+  // ── Styles (injected once, self-contained) ─────────────────────
+  function injectCSS() {
+    if (document.getElementById('pwa-css')) return;
     const s = document.createElement('style');
-    s.id = 'pwa-styles';
+    s.id = 'pwa-css';
     s.textContent = `
+      /* ── shared banner shell ── */
       .pwa-banner {
         position: fixed;
-        bottom: 76px;
         left: 50%;
-        transform: translateX(-50%) translateY(18px);
+        transform: translateX(-50%) translateY(14px);
         opacity: 0;
-        width: min(430px, calc(100vw - 22px));
-        background: #1e293b;
-        color: #fff;
-        border-radius: 14px;
-        padding: 11px 13px;
+        width: min(440px, calc(100vw - 20px));
+        z-index: 1000;
         display: flex;
         align-items: center;
         gap: 10px;
-        box-shadow: 0 8px 30px rgba(15,23,42,0.3), 0 2px 8px rgba(15,23,42,0.18);
-        z-index: 310;
+        padding: 11px 12px;
+        border-radius: 14px;
+        border: 1px solid rgba(255,255,255,0.08);
+        background: #1e293b;
+        color: #fff;
         font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
         font-size: 0.84rem;
-        border: 1px solid rgba(255,255,255,0.08);
-        transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.16,1,0.3,1);
+        box-shadow: 0 10px 36px rgba(15,23,42,0.32), 0 2px 8px rgba(15,23,42,0.18);
+        transition: opacity .32s ease, transform .32s cubic-bezier(0.16,1,0.3,1);
+        pointer-events: none;
       }
-      .pwa-banner.pwa-banner-in {
+      .pwa-banner.pwa-in {
         opacity: 1;
         transform: translateX(-50%) translateY(0);
+        pointer-events: all;
       }
+
+      /* install banner — slides up above the bottom nav */
+      #pwa-install {
+        bottom: 74px;
+      }
+      /* update banner — slides down from below the header */
+      #pwa-update {
+        top: 66px;
+        transform: translateX(-50%) translateY(-14px);
+      }
+      #pwa-update.pwa-in {
+        transform: translateX(-50%) translateY(0);
+      }
+
+      /* icon pill */
       .pwa-icon {
         width: 36px; height: 36px; flex-shrink: 0;
-        background: rgba(79,70,229,0.22);
         border-radius: 9px;
+        background: rgba(79,70,229,0.22);
+        color: #a5b4fc;
         display: flex; align-items: center; justify-content: center;
-        font-size: 1rem; color: #a5b4fc;
+        font-size: 1rem;
       }
-      .pwa-text {
+      .pwa-icon-update {
+        background: rgba(16,185,129,0.18);
+        color: #6ee7b7;
+      }
+
+      /* text */
+      .pwa-copy {
         flex: 1; min-width: 0;
         display: flex; flex-direction: column; gap: 1px;
       }
-      .pwa-text strong {
-        font-weight: 700; font-size: 0.87rem; color: #fff; display: block;
+      .pwa-copy strong {
+        display: block; font-weight: 700; font-size: 0.86rem; color: #fff;
+        letter-spacing: -0.01em;
       }
-      .pwa-text span {
-        font-size: 0.75rem; color: rgba(255,255,255,0.5);
+      .pwa-copy span {
+        font-size: 0.73rem; color: rgba(255,255,255,0.48);
         white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
       }
-      .pwa-text i { font-size: 0.7rem; color: rgba(255,255,255,0.65); }
+      .pwa-copy i { color: rgba(255,255,255,0.7); font-size: 0.68rem; }
+
+      /* primary CTA */
       .pwa-cta {
-        background: #4f46e5; color: #fff; border: none;
-        border-radius: 8px; padding: 7px 14px;
-        font-size: 0.8rem; font-weight: 700; cursor: pointer;
-        font-family: inherit; white-space: nowrap; flex-shrink: 0;
-        box-shadow: 0 2px 8px rgba(79,70,229,0.38);
-        transition: background 0.15s, transform 0.15s;
+        flex-shrink: 0;
+        background: #4f46e5; color: #fff;
+        border: none; border-radius: 8px;
+        padding: 7px 15px;
+        font-family: inherit; font-size: 0.8rem; font-weight: 700;
+        cursor: pointer; white-space: nowrap;
+        box-shadow: 0 2px 10px rgba(79,70,229,0.4);
+        transition: background .15s, transform .15s;
       }
-      .pwa-cta:hover { background: #3730a3; transform: scale(1.03); }
-      .pwa-dismiss-btn {
-        width: 28px; height: 28px; flex-shrink: 0;
+      .pwa-cta:hover { background: #3730a3; transform: scale(1.04); }
+
+      /* dismiss × */
+      .pwa-close {
+        flex-shrink: 0;
+        width: 28px; height: 28px;
         background: rgba(255,255,255,0.07); border: none;
-        border-radius: 7px; color: rgba(255,255,255,0.4);
-        font-size: 0.73rem; cursor: pointer; font-family: inherit;
+        border-radius: 7px; color: rgba(255,255,255,0.38);
+        font-size: 0.73rem; cursor: pointer;
         display: flex; align-items: center; justify-content: center;
-        transition: background 0.15s, color 0.15s;
+        font-family: inherit;
+        transition: background .15s, color .15s;
       }
-      .pwa-dismiss-btn:hover { background: rgba(255,255,255,0.14); color: #fff; }
-      @media (max-width: 360px) { .pwa-text span { display: none; } }
+      .pwa-close:hover { background: rgba(255,255,255,0.15); color: #fff; }
+
+      /* hide subtitle on very small phones */
+      @media (max-width: 360px) { .pwa-copy span { display: none; } }
     `;
     document.head.appendChild(s);
   }
