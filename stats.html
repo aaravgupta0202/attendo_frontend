@@ -4,6 +4,39 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Attendo • Statistics</title>
+  <!-- PWA Core -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#4f46e5">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="application-name" content="Attendo">
+
+  <!-- iOS / Safari -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Attendo">
+  <link rel="apple-touch-icon" href="icons/icon-180.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="icons/icon-128.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152.png">
+  <link rel="apple-touch-icon" sizes="167x167" href="icons/icon-167.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-180.png">
+  <link rel="apple-touch-startup-image" media="(device-width:430px) and (device-height:932px) and (-webkit-device-pixel-ratio:3)" href="icons/splash-1290x2796.png">
+  <link rel="apple-touch-startup-image" media="(device-width:390px) and (device-height:844px) and (-webkit-device-pixel-ratio:3)" href="icons/splash-1170x2532.png">
+  <link rel="apple-touch-startup-image" media="(device-width:375px) and (device-height:667px) and (-webkit-device-pixel-ratio:2)" href="icons/splash-750x1334.png">
+  <link rel="apple-touch-startup-image" media="(device-width:1024px) and (device-height:1366px) and (-webkit-device-pixel-ratio:2)" href="icons/splash-2048x2732.png">
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/png" sizes="32x32"   href="icons/icon-96.png">
+  <link rel="icon" type="image/png" sizes="96x96"   href="icons/icon-96.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+
+  <!-- Windows -->
+  <meta name="msapplication-TileColor" content="#4f46e5">
+  <meta name="msapplication-TileImage" content="icons/icon-144.png">
+  <meta name="msapplication-config" content="browserconfig.xml">
+
+  <!-- SEO -->
+  <meta name="description" content="Track academic attendance with swipe gestures. Never miss your target percentage again.">
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="css/theme.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -43,7 +76,7 @@
     .ov-icon-amber   { background: rgba(245,158,11,0.1);  color: var(--amber-d); }
 
     .ov-value {
-      font-family: var(--font-display);
+      font-family: var(--font);
       font-size: 1.9rem;
       font-weight: 800;
       letter-spacing: -0.04em;
@@ -76,7 +109,7 @@
     }
 
     .chart-card-title {
-      font-family: var(--font-display);
+      font-family: var(--font);
       font-size: 0.92rem;
       font-weight: 700;
       color: var(--ink-light);
@@ -97,7 +130,7 @@
     .subject-list { margin-bottom: var(--space-6); }
 
     .subject-list h2 {
-      font-family: var(--font-display);
+      font-family: var(--font);
       font-size: 1.05rem;
       font-weight: 700;
       color: var(--ink);
@@ -135,7 +168,7 @@
       margin-bottom: var(--space-4);
     }
     .subj-name {
-      font-family: var(--font-display);
+      font-family: var(--font);
       font-size: 1rem;
       font-weight: 700;
       color: var(--ink);
@@ -154,7 +187,7 @@
       text-align: center;
     }
     .subj-stat-val {
-      font-family: var(--font-display);
+      font-family: var(--font);
       font-size: 1.1rem;
       font-weight: 800;
       color: var(--ink);
@@ -199,7 +232,7 @@
       margin-bottom: var(--space-5);
     }
     .cal-month {
-      font-family: var(--font-display);
+      font-family: var(--font);
       font-size: 1.05rem;
       font-weight: 700;
       color: var(--ink);
@@ -314,7 +347,7 @@
       margin-bottom: var(--space-4);
     }
     .insight-head h3 {
-      font-family: var(--font-display);
+      font-family: var(--font);
       font-size: 0.95rem;
       font-weight: 700;
       color: var(--ink);
@@ -388,7 +421,7 @@
       margin-bottom: var(--space-6);
     }
     .stats-title-area h1 {
-      font-family: var(--font-display);
+      font-family: var(--font);
       font-size: 1.9rem;
       font-weight: 800;
       letter-spacing: -0.04em;
@@ -411,7 +444,7 @@
       margin-bottom: var(--space-4);
     }
     .empty-stats h3 {
-      font-family: var(--font-display);
+      font-family: var(--font);
       font-size: 1.2rem;
       font-weight: 700;
       color: var(--ink-light);
@@ -591,5 +624,6 @@
   <script src="js/utils.js"></script>
   <script src="js/storage.js"></script>
   <script src="js/stats.js"></script>
+  <script src="js/pwa.js"></script>
 </body>
 </html>

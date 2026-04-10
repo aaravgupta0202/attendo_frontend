@@ -4,271 +4,264 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Attendo • Dashboard</title>
+
+  <!-- PWA Core -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#4f46e5">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="application-name" content="Attendo">
+
+  <!-- iOS / Safari -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Attendo">
+  <!-- Apple touch icons — all sizes for every device -->
+  <link rel="apple-touch-icon" href="icons/icon-180.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="icons/icon-128.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152.png">
+  <link rel="apple-touch-icon" sizes="167x167" href="icons/icon-167.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-180.png">
+  <!-- iOS splash screens (portrait, common devices) -->
+  <link rel="apple-touch-startup-image" media="(device-width:430px) and (device-height:932px) and (-webkit-device-pixel-ratio:3)" href="icons/splash-1290x2796.png">
+  <link rel="apple-touch-startup-image" media="(device-width:393px) and (device-height:852px) and (-webkit-device-pixel-ratio:3)" href="icons/splash-1179x2556.png">
+  <link rel="apple-touch-startup-image" media="(device-width:390px) and (device-height:844px) and (-webkit-device-pixel-ratio:3)" href="icons/splash-1170x2532.png">
+  <link rel="apple-touch-startup-image" media="(device-width:375px) and (device-height:812px) and (-webkit-device-pixel-ratio:3)" href="icons/splash-1125x2436.png">
+  <link rel="apple-touch-startup-image" media="(device-width:414px) and (device-height:896px) and (-webkit-device-pixel-ratio:2)" href="icons/splash-828x1792.png">
+  <link rel="apple-touch-startup-image" media="(device-width:375px) and (device-height:667px) and (-webkit-device-pixel-ratio:2)" href="icons/splash-750x1334.png">
+  <link rel="apple-touch-startup-image" media="(device-width:1024px) and (device-height:1366px) and (-webkit-device-pixel-ratio:2)" href="icons/splash-2048x2732.png">
+  <link rel="apple-touch-startup-image" media="(device-width:834px) and (device-height:1194px) and (-webkit-device-pixel-ratio:2)" href="icons/splash-1668x2388.png">
+  <link rel="apple-touch-startup-image" media="(device-width:820px) and (device-height:1180px) and (-webkit-device-pixel-ratio:2)" href="icons/splash-1640x2360.png">
+  <link rel="apple-touch-startup-image" media="(device-width:768px) and (device-height:1024px) and (-webkit-device-pixel-ratio:2)" href="icons/splash-1536x2048.png">
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/png" sizes="32x32"   href="icons/icon-96.png">
+  <link rel="icon" type="image/png" sizes="96x96"   href="icons/icon-96.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+
+  <!-- Windows -->
+  <meta name="msapplication-TileColor" content="#4f46e5">
+  <meta name="msapplication-TileImage" content="icons/icon-144.png">
+  <meta name="msapplication-config" content="browserconfig.xml">
+
+  <!-- SEO -->
+  <meta name="description" content="Track academic attendance with swipe gestures. Never miss your target percentage again.">
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="css/theme.css">
   <style>
 
-    /* HERO STATS */
+    /* ═══════════════════════════════════════════
+       HERO STATS
+    ═══════════════════════════════════════════ */
     .hero-bar {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      margin-bottom: 24px;
+      gap: 10px;
+      margin-bottom: 20px;
     }
     .hero-stat {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 16px 10px 12px;
+      border-radius: 16px;
+      padding: 14px 10px 12px;
       text-align: center;
-      box-shadow: var(--shadow-sm);
+      box-shadow: var(--shadow-xs);
       position: relative;
       overflow: hidden;
+      transition: box-shadow 0.2s ease, transform 0.2s ease;
     }
-    .hero-stat-icon {
-      width: 34px; height: 34px;
-      border-radius: 9px;
-      display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 8px;
-      font-size: 0.85rem;
-    }
-    .hero-stat:nth-child(1) .hero-stat-icon { background: rgba(79,70,229,0.1);  color: var(--brand); }
-    .hero-stat:nth-child(2) .hero-stat-icon { background: rgba(16,185,129,0.1); color: var(--emerald-d); }
-    .hero-stat:nth-child(3) .hero-stat-icon { background: rgba(244,63,94,0.1);  color: var(--rose); }
-    .hero-stat-value {
-      font-size: 1.85rem;
-      font-weight: 800;
-      line-height: 1;
-      margin-bottom: 3px;
-      letter-spacing: -0.03em;
-    }
-    .hero-stat:nth-child(1) .hero-stat-value { color: var(--brand); }
-    .hero-stat:nth-child(2) .hero-stat-value { color: var(--emerald-d); }
-    .hero-stat:nth-child(3) .hero-stat-value { color: var(--rose); }
-    .hero-stat-label {
-      font-size: 0.68rem;
-      font-weight: 600;
-      color: var(--slate);
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
-    }
+    .hero-stat:hover { box-shadow: var(--shadow-sm); transform: translateY(-1px); }
+    /* coloured bottom line */
     .hero-stat::after {
       content: '';
-      position: absolute;
-      bottom: 0; left: 0; right: 0;
-      height: 3px;
+      position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
     }
     .hero-stat:nth-child(1)::after { background: var(--brand); }
     .hero-stat:nth-child(2)::after { background: var(--emerald); }
     .hero-stat:nth-child(3)::after { background: var(--rose); }
 
-    /* WELCOME */
-    .welcome-card {
-      text-align: center;
-      padding: 52px 28px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      box-shadow: var(--shadow-sm);
-    }
-    .welcome-icon {
-      width: 64px; height: 64px;
-      background: linear-gradient(135deg, var(--brand), var(--brand-l));
-      border-radius: 16px;
+    .hero-stat-icon {
+      width: 32px; height: 32px; border-radius: 8px;
       display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 18px;
-      font-size: 1.6rem; color: white;
-      box-shadow: 0 8px 20px rgba(79,70,229,0.3);
+      margin: 0 auto 8px; font-size: 0.82rem;
     }
-    .welcome-card h2 { font-size: 1.45rem; font-weight: 800; color: var(--ink); margin-bottom: 8px; letter-spacing: -0.02em; }
-    .welcome-card p  { color: var(--slate); margin-bottom: 22px; font-size: 0.93rem; line-height: 1.55; }
+    .hero-stat:nth-child(1) .hero-stat-icon { background: rgba(79,70,229,0.1);   color: var(--brand); }
+    .hero-stat:nth-child(2) .hero-stat-icon { background: rgba(16,185,129,0.1);  color: var(--emerald-d); }
+    .hero-stat:nth-child(3) .hero-stat-icon { background: rgba(244,63,94,0.1);   color: var(--rose); }
 
-    /* SCHEDULE HEADER */
+    .hero-stat-value {
+      font-size: 1.75rem; font-weight: 800;
+      line-height: 1; margin-bottom: 3px;
+      letter-spacing: -0.04em;
+    }
+    .hero-stat:nth-child(1) .hero-stat-value { color: var(--brand); }
+    .hero-stat:nth-child(2) .hero-stat-value { color: var(--emerald-d); }
+    .hero-stat:nth-child(3) .hero-stat-value { color: var(--rose); }
+
+    .hero-stat-label {
+      font-size: 0.66rem; font-weight: 700;
+      color: var(--mist);
+      text-transform: uppercase; letter-spacing: 0.06em;
+    }
+
+    /* ═══════════════════════════════════════════
+       SCHEDULE HEADER
+    ═══════════════════════════════════════════ */
     .schedule-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      display: flex; align-items: center; justify-content: space-between;
       margin-bottom: 14px;
     }
-    .schedule-left { display: flex; align-items: center; gap: 10px; }
+    .schedule-left { display: flex; align-items: center; gap: 8px; }
     .day-pill {
-      background: var(--brand);
-      color: white;
-      border-radius: 999px;
-      padding: 4px 13px;
-      font-size: 0.78rem;
-      font-weight: 700;
-      letter-spacing: 0.03em;
+      background: var(--brand); color: white;
+      border-radius: 99px; padding: 4px 12px;
+      font-size: 0.78rem; font-weight: 700; letter-spacing: 0.03em;
     }
-    .schedule-count { font-size: 0.82rem; color: var(--slate); font-weight: 500; }
+    .schedule-count { font-size: 0.8rem; color: var(--slate); font-weight: 500; }
+
     .mark-all-btn {
       display: flex; align-items: center; gap: 5px;
-      background: var(--surface-2);
-      border: 1px solid var(--border-md);
-      border-radius: 999px;
-      padding: 5px 13px;
-      font-size: 0.77rem; font-weight: 600; color: var(--ink-light);
-      cursor: pointer;
-      transition: all 0.2s ease;
+      background: var(--surface-2); border: 1px solid var(--border-md);
+      border-radius: 99px; padding: 5px 13px;
+      font-size: 0.76rem; font-weight: 700; color: var(--ink-light);
+      cursor: pointer; transition: all 0.18s ease;
     }
     .mark-all-btn:hover { background: var(--brand); color: white; border-color: var(--brand); }
 
-    /* ═══════════════════════════════════════
+    /* ═══════════════════════════════════════════
        CLASS CARD
-    ═══════════════════════════════════════ */
+       – left coloured stripe
+       – ring on the right (fixed size, text never overflows)
+       – smooth spring swipe
+    ═══════════════════════════════════════════ */
     .class-card {
       background: var(--surface);
       border: 1.5px solid var(--border);
       border-radius: 18px;
-      /* left padding bigger to clear stripe */
-      padding: 16px 16px 13px 20px;
+      padding: 15px 15px 13px 20px;   /* extra left for stripe */
       margin-bottom: 10px;
       cursor: grab;
-      user-select: none;
-      -webkit-user-select: none;
-      position: relative;
-      overflow: hidden;
+      user-select: none; -webkit-user-select: none;
+      position: relative; overflow: hidden;
       will-change: transform;
-      /* Only non-transform properties transition here */
-      transition: border-color 100ms ease, background 100ms ease, box-shadow 200ms ease;
-      box-shadow: 0 1px 3px rgba(15,23,42,0.07);
+      /* Only non-transform props animate during normal state */
+      transition: border-color 120ms ease, background 120ms ease, box-shadow 0.2s ease;
+      box-shadow: var(--shadow-xs);
     }
+    .class-card:hover { box-shadow: var(--shadow-sm); }
     .class-card:active { cursor: grabbing; }
 
-    /* Left colour stripe */
+    /* Coloured left stripe */
     .card-stripe {
-      position: absolute;
-      left: 0; top: 0; bottom: 0;
-      width: 5px;
+      position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
       border-radius: 18px 0 0 18px;
       background: var(--card-color, var(--brand));
     }
 
-    /* Swipe tint states */
+    /* Swipe tints */
     .class-card.sw-right {
       background: rgba(16,185,129,0.05);
-      border-color: rgba(16,185,129,0.4);
+      border-color: rgba(16,185,129,0.35);
     }
     .class-card.sw-left {
       background: rgba(244,63,94,0.05);
-      border-color: rgba(244,63,94,0.4);
+      border-color: rgba(244,63,94,0.35);
     }
 
-    /* Swipe action badges — appear as card is dragged */
+    /* Action badges that slide in as you swipe */
     .swipe-badge {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%) scale(0.75);
-      border-radius: 10px;
-      padding: 6px 13px;
-      font-size: 0.78rem;
-      font-weight: 700;
+      position: absolute; top: 50%;
+      transform: translateY(-50%) scale(0.8);
+      border-radius: 9px; padding: 5px 11px;
+      font-size: 0.74rem; font-weight: 700;
       display: flex; align-items: center; gap: 5px;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 100ms ease, transform 100ms ease;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
+      opacity: 0; pointer-events: none;
+      transition: opacity 120ms ease, transform 120ms ease;
+      letter-spacing: 0.04em; text-transform: uppercase;
+      white-space: nowrap;
     }
     .swipe-badge-present {
-      left: 12px;
-      background: var(--emerald);
-      color: white;
-      box-shadow: 0 3px 10px rgba(16,185,129,0.45);
+      left: 14px;
+      background: var(--emerald); color: white;
+      box-shadow: 0 3px 10px rgba(16,185,129,0.42);
     }
     .swipe-badge-absent {
-      right: 12px;
-      background: var(--rose);
-      color: white;
-      box-shadow: 0 3px 10px rgba(244,63,94,0.45);
+      right: 14px;
+      background: var(--rose); color: white;
+      box-shadow: 0 3px 10px rgba(244,63,94,0.42);
     }
     .class-card.sw-right .swipe-badge-present,
     .class-card.sw-left  .swipe-badge-absent {
-      opacity: 1;
-      transform: translateY(-50%) scale(1);
+      opacity: 1; transform: translateY(-50%) scale(1);
     }
 
-    /* Card body — ring on the right */
+    /* Card body layout */
     .card-body {
-      display: flex;
-      align-items: center;
-      gap: 14px;
+      display: flex; align-items: center; gap: 14px;
     }
     .card-info { flex: 1; min-width: 0; }
 
     .subject-title {
-      font-size: 0.97rem;
-      font-weight: 700;
-      color: var(--ink);
-      margin-bottom: 5px;
+      font-size: 0.97rem; font-weight: 700; color: var(--ink);
+      margin-bottom: 6px;
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
 
     .risk-tag {
       display: inline-flex; align-items: center; gap: 4px;
-      padding: 2px 8px;
-      border-radius: 999px;
-      font-size: 0.66rem; font-weight: 700;
+      padding: 2px 9px; border-radius: 99px;
+      font-size: 0.65rem; font-weight: 700;
       letter-spacing: 0.04em; text-transform: uppercase;
     }
     .risk-tag.on-track  { background: rgba(16,185,129,0.1);  color: var(--emerald-d); }
     .risk-tag.watch-out { background: rgba(245,158,11,0.12); color: var(--amber-d); }
-    .risk-tag.at-risk   { background: rgba(244,63,94,0.10);  color: var(--rose); }
+    .risk-tag.at-risk   { background: rgba(244,63,94,0.10);  color: var(--rose-d); }
 
-    /* ── Ring — fixed so 100% never overflows ── */
+    /* ── Ring ──
+       ViewBox 0 0 60 60, centre 30,30, radius 24
+       stroke-width 5.5 → inner diameter ≈ 37px  → label font fits easily
+       circumference = 2π×24 ≈ 150.8
+       All text is positioned absolutely, centred, and shrinks font to fit */
     .ring-wrap {
       flex-shrink: 0;
-      width: 64px; height: 64px;
+      width: 60px; height: 60px;
       position: relative;
     }
-    /* SVG viewBox="0 0 64 64" → radius=25, so max stroke+dasharray fully fits */
     .ring-svg {
       width: 100%; height: 100%;
-      transform: rotate(-90deg);
       display: block;
+      transform: rotate(-90deg);
       overflow: visible;
     }
-    .ring-bg {
-      fill: none;
-      stroke: var(--surface-3);
-      stroke-width: 5.5;
-    }
+    .ring-bg   { fill: none; stroke: var(--surface-3); stroke-width: 5.5; }
     .ring-fill {
-      fill: none;
-      stroke-width: 5.5;
-      stroke-linecap: round;
+      fill: none; stroke-width: 5.5; stroke-linecap: round;
       transition: stroke-dashoffset 0.75s cubic-bezier(0.16,1,0.3,1);
     }
-    /* Centered label using flexbox — always visible, never overflows */
+    /* Label: absolutely centred, font capped so "100%" (4 chars) always fits
+       inside the ~37px inner diameter at 60px container size */
     .ring-label {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      /* Font size calculated so "100%" (4 chars) fits in ~42px inner diam */
-      font-size: 0.67rem;
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.65rem;    /* ~10.4px — fits 4 chars in 37px */
       font-weight: 800;
       color: var(--ink);
       line-height: 1;
-      letter-spacing: -0.01em;
+      letter-spacing: -0.02em;
+      pointer-events: none;
     }
 
     /* Progress bar */
-    .card-progress { margin-top: 11px; }
+    .card-progress { margin-top: 12px; }
     .progress-meta {
       display: flex; justify-content: space-between;
-      font-size: 0.73rem; color: var(--slate);
-      margin-bottom: 5px; font-weight: 500;
+      font-size: 0.73rem; color: var(--slate); margin-bottom: 5px; font-weight: 500;
     }
 
     /* Footer */
     .card-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 11px;
-      padding-top: 9px;
+      display: flex; justify-content: space-between; align-items: center;
+      margin-top: 11px; padding-top: 9px;
       border-top: 1px solid var(--border);
     }
     .status-row {
@@ -276,72 +269,94 @@
       font-size: 0.78rem; font-weight: 600; color: var(--slate);
     }
     .status-icon {
-      width: 20px; height: 20px;
-      border-radius: 5px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 0.62rem;
+      width: 20px; height: 20px; border-radius: 5px;
+      display: flex; align-items: center; justify-content: center; font-size: 0.62rem;
     }
     .status-icon.pending   { background: rgba(245,158,11,0.12); color: var(--amber-d); }
     .status-icon.attended  { background: rgba(16,185,129,0.12); color: var(--emerald-d); }
-    .status-icon.missed    { background: rgba(244,63,94,0.10);  color: var(--rose); }
+    .status-icon.missed    { background: rgba(244,63,94,0.10);  color: var(--rose-d); }
     .status-icon.cancelled { background: var(--surface-2);      color: var(--mist); }
 
     .swipe-hint {
       display: flex; align-items: center; gap: 10px;
-      font-size: 0.7rem; color: var(--mist); font-weight: 500;
+      font-size: 0.69rem; color: var(--mist); font-weight: 500;
     }
     .swipe-hint span { display: flex; align-items: center; gap: 3px; }
 
-    /* EMPTY DAY */
+    /* ═══════════════════════════════════════════
+       WELCOME / SETUP PROMPT
+    ═══════════════════════════════════════════ */
+    .welcome-card {
+      text-align: center; padding: 52px 24px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 20px; box-shadow: var(--shadow-sm);
+    }
+    .welcome-icon {
+      width: 68px; height: 68px; border-radius: 18px;
+      background: linear-gradient(135deg, rgba(79,70,229,0.1), rgba(16,185,129,0.1));
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 18px; font-size: 1.9rem; color: var(--brand);
+    }
+    .welcome-card h2 {
+      font-size: 1.4rem; font-weight: 800; letter-spacing: -0.03em;
+      color: var(--ink); margin-bottom: 8px;
+    }
+    .welcome-card p { color: var(--slate); font-size: 0.9rem; margin-bottom: 24px; }
+
+    /* ═══════════════════════════════════════════
+       EMPTY DAY
+    ═══════════════════════════════════════════ */
     .empty-day {
-      text-align: center;
-      padding: 52px 28px;
+      text-align: center; padding: 48px 24px;
       background: var(--surface);
-      border: 1.5px dashed var(--border-md);
-      border-radius: 20px;
+      border: 1.5px dashed var(--border-md); border-radius: 18px;
     }
     .empty-day-icon {
-      width: 56px; height: 56px; border-radius: 14px;
+      width: 52px; height: 52px; border-radius: 13px;
       background: var(--surface-2);
       display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 14px; font-size: 1.3rem; color: var(--mist);
+      margin: 0 auto 14px; font-size: 1.25rem; color: var(--mist);
     }
     .empty-day h3 { font-size: 1rem; font-weight: 700; color: var(--ink-light); margin-bottom: 5px; }
     .empty-day p  { color: var(--mist); font-size: 0.85rem; margin-bottom: 18px; }
 
-    /* SWIPE GUIDE */
+    /* ═══════════════════════════════════════════
+       SWIPE GUIDE
+    ═══════════════════════════════════════════ */
     .swipe-guide {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 14px 16px;
-      margin-top: 10px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 14px; padding: 13px 15px; margin-top: 8px;
     }
     .swipe-guide-title {
-      font-size: 0.7rem; font-weight: 700; color: var(--slate);
+      font-size: 0.68rem; font-weight: 700; color: var(--slate);
       text-transform: uppercase; letter-spacing: 0.07em;
-      margin-bottom: 10px;
-      display: flex; align-items: center; gap: 5px;
+      margin-bottom: 9px; display: flex; align-items: center; gap: 5px;
     }
-    .guide-row { display: flex; gap: 7px; }
+    .guide-row { display: flex; gap: 6px; }
     .guide-item {
       flex: 1; display: flex; align-items: center; justify-content: center;
-      gap: 5px; padding: 7px 4px;
-      border-radius: 9px; font-size: 0.72rem; font-weight: 600;
+      gap: 5px; padding: 7px 4px; border-radius: 8px;
+      font-size: 0.71rem; font-weight: 600;
     }
     .guide-item.right  { background: rgba(16,185,129,0.08); color: var(--emerald-d); }
-    .guide-item.left   { background: rgba(244,63,94,0.07);  color: var(--rose); }
-    .guide-item.tap    { background: var(--surface-2); color: var(--slate); }
+    .guide-item.left   { background: rgba(244,63,94,0.07);  color: var(--rose-d); }
+    .guide-item.tap    { background: var(--surface-2);       color: var(--slate); }
+    .guide-item i      { font-size: 0.75rem; }
 
+    /* ═══════════════════════════════════════════
+       RESPONSIVE
+    ═══════════════════════════════════════════ */
     @media (max-width: 400px) {
       .hero-stat-value { font-size: 1.5rem; }
-      .guide-row { gap: 5px; }
-      .guide-item { font-size: 0.65rem; padding: 6px 3px; }
+      .hero-stat { padding: 12px 8px 10px; }
+      .guide-row { gap: 4px; }
+      .guide-item { font-size: 0.64rem; padding: 6px 3px; }
     }
   </style>
 </head>
 <body>
 
+  <!-- ── Header ── -->
   <header class="app-header">
     <div class="header-inner">
       <div class="header-brand">
@@ -362,13 +377,14 @@
     </div>
   </header>
 
+  <!-- ── Main ── -->
   <main class="page-wrap">
 
     <!-- Setup prompt -->
     <div class="welcome-card hidden animate-up" id="setupPrompt">
       <div class="welcome-icon"><i class="fas fa-book-open"></i></div>
       <h2>Welcome to Attendo</h2>
-      <p>Set up your subjects and weekly timetable to start tracking attendance.</p>
+      <p>Set up your subjects and timetable to start tracking attendance.</p>
       <a href="setup.html" class="btn btn-primary">
         <i class="fas fa-rocket"></i> Begin Setup
       </a>
@@ -377,24 +393,25 @@
     <!-- Hero stats -->
     <div class="hero-bar hidden animate-up" id="heroStats">
       <div class="hero-stat">
-        <div class="hero-stat-icon"><i class="fas fa-calendar-day"></i></div>
+        <div class="hero-stat-icon"><i class="fas fa-calendar-days"></i></div>
         <div class="hero-stat-value" id="statTotal">0</div>
-        <div class="hero-stat-label">Today</div>
+        <div class="hero-stat-label">Classes</div>
       </div>
       <div class="hero-stat">
         <div class="hero-stat-icon"><i class="fas fa-circle-check"></i></div>
         <div class="hero-stat-value" id="statAttended">0</div>
-        <div class="hero-stat-label">Present</div>
+        <div class="hero-stat-label">Attended</div>
       </div>
       <div class="hero-stat">
         <div class="hero-stat-icon"><i class="fas fa-circle-xmark"></i></div>
         <div class="hero-stat-value" id="statMissed">0</div>
-        <div class="hero-stat-label">Absent</div>
+        <div class="hero-stat-label">Missed</div>
       </div>
     </div>
 
     <!-- Schedule -->
     <div class="hidden" id="scheduleSection">
+
       <div class="schedule-head">
         <div class="schedule-left">
           <div class="day-pill" id="dayPill">–</div>
@@ -407,31 +424,40 @@
 
       <div id="classesContainer"></div>
 
+      <!-- Empty day -->
       <div class="empty-day hidden animate-up" id="emptyDay">
-        <div class="empty-day-icon"><i class="fas fa-calendar-check"></i></div>
+        <div class="empty-day-icon"><i class="fas fa-sun"></i></div>
         <h3>No classes today</h3>
-        <p>Enjoy your break — or edit your schedule.</p>
+        <p>Enjoy your free day or catch up on some study.</p>
         <a href="setup.html" class="btn btn-ghost btn-sm">
           <i class="fas fa-sliders"></i> Edit Schedule
         </a>
       </div>
 
-      <div class="swipe-guide animate-up animate-up-d3" id="swipeGuide">
+      <!-- Swipe guide -->
+      <div class="swipe-guide animate-up d3" id="swipeGuide">
         <div class="swipe-guide-title">
-          <i class="fas fa-hand-pointer"></i> How to mark attendance
+          <i class="fas fa-hand-pointer"></i> Gestures
         </div>
         <div class="guide-row">
-          <div class="guide-item right"><i class="fas fa-arrow-right"></i> Right = Present</div>
-          <div class="guide-item left"><i class="fas fa-arrow-left"></i> Left = Absent</div>
-          <div class="guide-item tap"><i class="fas fa-hand-pointer"></i> Tap = Cancel</div>
+          <div class="guide-item right">
+            <i class="fas fa-arrow-right"></i> Swipe right — Present
+          </div>
+          <div class="guide-item left">
+            <i class="fas fa-arrow-left"></i> Swipe left — Absent
+          </div>
+          <div class="guide-item tap">
+            <i class="fas fa-hand-pointer"></i> Tap — Cancel
+          </div>
         </div>
       </div>
     </div>
 
   </main>
 
+  <!-- ── Bottom Nav ── -->
   <nav class="bottom-nav">
-    <button class="nav-item nav-undo" id="undoBtn" disabled>
+    <button class="nav-item undo-btn" id="undoBtn" disabled>
       <i class="fas fa-rotate-left"></i>
       <span>Undo</span>
     </button>
@@ -440,7 +466,7 @@
       <span>Today</span>
     </a>
     <a href="stats.html" class="nav-item">
-      <i class="fas fa-chart-bar"></i>
+      <i class="fas fa-chart-column"></i>
       <span>Stats</span>
     </a>
     <a href="setup.html" class="nav-item">
@@ -449,6 +475,7 @@
     </a>
   </nav>
 
+  <!-- ── Side Menu ── -->
   <div class="side-menu" id="sideMenu">
     <div class="menu-top">
       <div class="menu-logo">
@@ -457,31 +484,37 @@
       </div>
       <button class="menu-close" id="menuClose"><i class="fas fa-times"></i></button>
       <div class="menu-storage">
-        <div class="menu-storage-label">Storage Used</div>
+        <div class="menu-storage-label">Storage</div>
         <div class="menu-storage-bar">
           <div class="menu-storage-fill" id="storageFill" style="width:0%"></div>
         </div>
-        <div class="menu-storage-text" id="storageText">–</div>
+        <div class="menu-storage-text" id="storageText">Calculating…</div>
       </div>
     </div>
     <nav class="menu-nav">
       <a href="index.html" class="menu-link active"><i class="fas fa-house"></i> Dashboard</a>
-      <a href="stats.html" class="menu-link"><i class="fas fa-chart-bar"></i> Statistics</a>
+      <a href="stats.html" class="menu-link"><i class="fas fa-chart-column"></i> Statistics</a>
       <a href="setup.html" class="menu-link"><i class="fas fa-sliders"></i> Setup</a>
       <div class="menu-divider"></div>
       <button class="menu-link" id="menuExport"><i class="fas fa-download"></i> Export Data</button>
       <button class="menu-link" id="menuImport"><i class="fas fa-upload"></i> Import Data</button>
+            <div class="menu-divider"></div>
+      <button class="menu-link install-link" id="menuInstall" onclick="attendoInstall()"><i class="fas fa-download"></i> Install App</button>
       <div class="menu-divider"></div>
-      <button class="menu-link danger" id="menuReset"><i class="fas fa-trash-alt"></i> Reset All Data</button>
+      <button class="menu-link danger" id="menuReset"><i class="fas fa-trash-alt"></i> Reset All</button>
     </nav>
   </div>
   <div class="menu-overlay" id="menuOverlay"></div>
 
+  <!-- Toast + file input -->
   <div class="toast-container" id="toastContainer"></div>
   <input type="file" id="importInput" accept=".json" style="display:none">
+
+  
 
   <script src="js/utils.js"></script>
   <script src="js/storage.js"></script>
   <script src="js/dashboard.js"></script>
+  <script src="js/pwa.js"></script>
 </body>
 </html>
